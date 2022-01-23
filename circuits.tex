@@ -1,0 +1,55 @@
+\documentclass[a4paper,twoside,10pt]{report}
+
+%\usepackage[USenglish]{babel} %francais, polish, spanish, ...
+\usepackage[T1]{fontenc}
+%\usepackage[ansinew]{inputenc}
+\usepackage[bookmarks=false,colorlinks=true,linkcolor={black},urlcolor={red}]{hyperref}
+
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{a4wide}
+
+\begin{document}
+
+\pagestyle{empty} % no headings for the first pages
+
+\title{A Library of Circuits}
+\author{Richard Hermosillo}
+%\date{} % the current date is used if commented out
+\maketitle
+
+\tableofcontents
+\cleardoublepage % the first chapter should start on an odd page.
+\pagestyle{plain} % display headings: headings / fancy / ...
+
+%\chapter*{Introduction}
+% TODO add introduction
+\include{opampcircuits}
+\include{inamps}
+\include{filters}
+\include{compensators}
+%\include{diodes}
+%\include{advancedopampcircuits}
+\include{transistoramplifiers}
+\include{voltagereferences}
+\include{currentmirrors}
+\include{outputamplifiers}
+%\include{comparators}
+%\include{translinear}
+\include{converters}
+\include{chargepumps}
+%\include{opampdesigns}
+%\include{oscillators}
+
+%\chapter{Snubbers}
+
+%\section{RC Snubber}
+
+%\section{Diode Snubber}
+
+\end{document}
+
