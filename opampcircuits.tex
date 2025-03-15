@@ -13,28 +13,56 @@ The capacitor and resistors should be chosen appropriately to block only the des
 A comparator is a very simple circuit that compares its input voltage $v_{i}$ to a DC reference voltage $V_{REF}$ and outputs $V_{CC}$ if $v_{i} > V_{REF}$ and $V_{EE}$ otherwise. It utilizes the operational amplifier's ideally infinite open loop gain to to force $v_{o}$ to $V_{CC}$ or $V_{EE}$ for even a very small input differential voltage ($v_{i} - V_{REF}$).
 
 \section{Inverting amplifier}
-\begin{center}	\includegraphics[width=0.70\textwidth]{schematics/invertingopampamplifier.PNG}
+\begin{center}
+\begin{circuitikz}
+\draw (0, 0) node[op amp] (opamp) {}
+		(opamp.-) to[short,-*] ++(-1,0) coordinate(A)
+		(opamp.+) to[short,-*] ++(-1,0) coordinate(B)
+		(B) to[R=${R_3=R_1 \parallel R_2}$] ++(0,-2) node[ground](G){}
+		(B) to[short] ++(-2,0) coordinate(B2)
+		(B2) to[C=$C_2$] ++(0,-2) node[ground]{}
+		(opamp.out) to[short,*-o] ++(1,0) coordinate(C)
+		(A) to[R,l_=$R_1$] ++(-2,0) to[C=$C_1$] ++(-2,0) to[short,-o] ++(-1,0) node[above]{$v_i$}
+		(A) |- ++(1,1) coordinate[yshift=1ex] (L1) to[R=$R_2$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{$v_o$}
+;
+\end{circuitikz}
 \end{center}
-The op amp's non-inverting input has ideally no input bias current so no current flows through $R_{3}$ or $C_{2}$ and the non-inverting input is at ground potential. Due to the op amp's high open loop gain, the inverting input is also ideally at ground potential so Kirchhoff's Current Law (KCL) relates $v_{i}$ and $v_{o}$ through the inverting input node. There is ideally no input bias current into the op amp's inverting input so the current through the impedance between the input and the inverting input is equal to the current through $R_{2}$. In the passband the series capacitor $C_{1}$ adds minimal impedance so the current through $R_{1}$ is $v_{i}/R_{1}$. This is also the current through $R_{2}$. The $R_{2}$ terminal connected to the inverting input is at ground potential so the voltage across $R_{2}$ is equal to $v_{o}$. The transfer function is therefore
+% \begin{center}	\includegraphics[width=0.70\textwidth]{schematics/invertingopampamplifier.PNG}
+% \end{center}
+The op amp's non-inverting input has ideally no input bias current so no current flows through $R_3$ or $C_2$ and the non-inverting input is at ground potential.
+Due to the op amp's high open loop gain, the inverting input is also ideally at ground potential so Kirchhoff's Current Law (KCL) relates $v_i$ and $v_o$ through the inverting input node.
+There is ideally no input bias current into the op amp's inverting input so the current through the impedance between the input and the inverting input is equal to the current through $R_2$.
+In the passband the series capacitor $C_1$ adds minimal impedance so the current through $R_1$ is $v_i/R_1$.
+This is also the current through $R_2$. The $R_2$ terminal connected to the inverting input is at ground potential so the voltage across $R_2$ is equal to $v_o$.
+The transfer function is therefore
 
 \textcolor{red}{
 \begin{equation}
-\frac{v_{o}}{v_{i}} = -\frac{R_{2}}{R_{1}}
+\frac{v_o}{v_i} = -\frac{R_2}{R_1}
 \label{eq:invertingopampamplifier}
 \end{equation}
 }
 
-$R_{3}$ is an optional resistor used to reduce the inverting amplifier's output DC offset error due to a real op amp's nonzero input bias currents. Its purpose is to introduce a small DC offset voltage at the non-inverting input which is equal to the small DC offset voltage at the inverting input. It should be set to
+$R_{3}$ is an optional resistor used to reduce the inverting amplifier's output DC offset error due to a real op amp's nonzero input bias currents.
+Its purpose is to introduce a small DC offset voltage at the non-inverting input which is equal to the small DC offset voltage at the inverting input.
+It should be set to
 
 \textcolor{red}{
 \begin{equation}
-R_{3} = R_{1}||R_{2}
+R_3 = R_1 \parallel R_2
 \end{equation}
 }
 
-$C_{2}$ is an optional capacitor used with $R_{3}$ to reduce high frequency noise added by $R_{3}$. $R_{3}$ is only needed to produce a DC offset and has no effect on the signal's transfer function, but it produces white thermal noise that can be attenuated by the low pass filter formed by $R_{3}$ and $C_{2}$.
-\par The bandwidth of this amplifier depends on the gain since voltage feedback op amps have a constant gain-bandwidth product -- increase the gain and the bandwidth decreases, decrease the gain and the bandwidth increases. If the gain-bandwidth product of the application circuit exceeds the op amp's gain-bandwidth product, multiple op amp inverting (or non-inverting) amplifiers with lower individual gains can be cascaded to achieve a high overall gain but a high bandwidth. The op amp gain is also restricted in most cases to greater than unity since many op amps are unstable for a gain less than unity.
-\par One important characteristic of this amplifier is that the gain is determined by a ratio of resistors, which makes the circuit very insensitive to temperature if the resistors are manufactured by the same process. All circuit elements are temperature dependent (resistors included) but since the gain is determined by a ratio of resistors the change in resistance of one resistor due to temperature should be very similar to the change in resistance of the other and the gain undergoes no net change. The op amp itself will exhibit temperature dependencies that affect the operation of the circuit, but modern op amps are designed to have very low temperature drifts so the op amp usually will not cause the circuit to become overly temperature sensitive.
+$C_2$ is an optional capacitor used with $R_3$ to reduce high frequency noise added by $R_3$.
+$R_3$ is only needed to produce a DC offset and has no effect on the signal's transfer function, but it produces white thermal noise that can be attenuated by the low pass filter formed by $R_3$ and $C_2$.
+
+The bandwidth of this amplifier depends on the gain since voltage feedback op amps have a constant gain-bandwidth product -- increase the gain and the bandwidth decreases, decrease the gain and the bandwidth increases.
+If the gain-bandwidth product of the application circuit exceeds the op amp's gain-bandwidth product, multiple op amp inverting (or non-inverting) amplifiers with lower individual gains can be cascaded to achieve a high overall gain but a high bandwidth.
+The op amp gain is also restricted in most cases to greater than unity since many op amps are unstable for a gain less than unity.
+
+One important characteristic of this amplifier is that the gain is determined by a ratio of resistors, which makes the circuit very insensitive to temperature if the resistors are manufactured by the same process.
+All circuit elements are temperature dependent (resistors included) but since the gain is determined by a ratio of resistors the change in resistance of one resistor due to temperature should be very similar to the change in resistance of the other and the gain undergoes no net change.
+The op amp itself will exhibit temperature dependencies that affect the operation of the circuit, but modern op amps are designed to have very low temperature drifts so the op amp usually will not cause the circuit to become overly temperature sensitive.
 
 \section{Non-inverting amplifier}
 \begin{center}
