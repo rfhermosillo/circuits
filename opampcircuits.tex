@@ -17,7 +17,8 @@ The capacitor and resistors should be chosen appropriately to block only the des
 		(B2) to[C=$C_2$] ++(0,-2) node[ground]{}
 		(opamp.out) to[short,*-o] ++(1,0) coordinate(C)
 		(A) to[R,l_=$R_1$] ++(-2,0) to[C=$C_1$] ++(-2,0) to[short,-o] ++(-1,0) node[above]{\vin}
-		(A) |- ++(1,1) coordinate[yshift=1ex] (L1) to[R=$R_2$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout};
+		(A) |- ++(1,1) coordinate[yshift=1ex] (L1) to[R=$R_2$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout}
+		;
 \end{circuitikz}
 \end{center}
 The op amp's non-inverting input has ideally no input bias current so no current flows through $R_3$ or $C_2$ and the non-inverting input is at ground potential.
@@ -65,9 +66,20 @@ All circuit elements are temperature dependent (resistors included) but since th
 The op amp itself will exhibit temperature dependencies that affect the operation of the circuit, but modern op amps are designed to have very low temperature drifts so the op amp usually will not cause the circuit to become overly temperature sensitive.
 
 \section{Non-inverting amplifier}
+% TODO: add capacitor between R1 and ground as in the "shelving amplifier" image, which would give a DC gain of 1 but AC gain
 \begin{center}
-\includegraphics[width=0.70\textwidth]{schematics/noninvertingopampamplifier.PNG}
-\end{center}
+	\begin{circuitikz}
+		\draw (0,0) node[above]{\vin} to[C=$C$, o-] ++(2,0) coordinate(in)
+		to[R=$R_3$] ++(0,-2) node[ground]{}
+		(in) to[short] ++(2,0) node[op amp, noinv input up, anchor=+](OA){}
+		(OA.out) to[R=$R_2$] ++(0,-2) coordinate(FB)
+		to[R=$R_1$] ++(0,-2) node[ground]{}
+		(OA.out) to[short, *-o] ++(1,0) node[above]{\vout}
+		(OA.-) -- (FB -| OA.-) to[short, -*] (FB)
+		;
+	\end{circuitikz}
+	\end{center}
+	
 The op amp non-inverting amplifier also employs negative feedback, but in this case the input voltage is connected to the op amp's non-inverting input. The gain equation is slightly different:
 
 \textcolor{red}{
@@ -78,7 +90,28 @@ The op amp non-inverting amplifier also employs negative feedback, but in this c
 }
 
 As with the inverting amplifier, the gain equation can be derived using the fact that an ideal operational amplifier's input terminals are at the same voltage and by using \ac{kcl} on the inverting input node.
-Similarly, $R_3$ may be replaced with a short but should equal $R_1 \parallel R_2$ to minimize the error caused by the op amp's input bias currents.
+
+$C$ and $R_3$ may be added as a high-pass filter in order to block \DC.
+$R_3$ is necessary to provide a \DC path for the op amp's input bias current, and sets the corner frequency for the input high-pass filter along with $C$.
+Use
+
+\textcolor{red}{
+\begin{equation}
+R_3 = R_1 \parallel R_2
+\end{equation}
+}
+
+to minimize the error caused by the op amp's input bias currents, then set $C$ for the desired corner frequency.
+
+By inspection
+
+\textcolor{red}{
+\begin{equation}
+\rin = R_3 \parallel R_+
+\end{equation}
+}
+
+at the frequencies of interest, where $R_+$ is the input resistance of the op amp's non-inverting input (which is ideally infinite).
 
 The gain equation shows that this circuit is a voltage buffer if $R_1 = R_2$, which is as simple as replacing the resistors with wires.
 The very low output impedance and very high input impedance of op amps ensures the buffer is a good voltage source (which ideally has zero impedance) while not loading down any circuitry that may be generating the desired voltage (such as a voltage divider composed of two resistors).
