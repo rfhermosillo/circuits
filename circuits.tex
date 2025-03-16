@@ -1,18 +1,44 @@
 \documentclass[a4paper,twoside,10pt]{report}
 
-%\usepackage[USenglish]{babel} %francais, polish, spanish, ...
-\usepackage[T1]{fontenc}
-%\usepackage[ansinew]{inputenc}
-\usepackage[bookmarks=false,colorlinks=true,linkcolor={black},urlcolor={red}]{hyperref}
+% \usepackage[T1]{fontenc}
+\usepackage{xcolor}
+\usepackage[bookmarks=false,colorlinks=true,linkcolor={black},urlcolor={red},citecolor={purple}]{hyperref}
 
-\usepackage{lmodern}
+\usepackage{acro}
+% \usepackage{lmodern}
 \usepackage{graphicx}
 \usepackage{parskip}
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amsfonts}
-\usepackage{a4wide}
-\usepackage[american]{circuitikz}
+% \usepackage{a4wide}
+\usepackage[margin=1in]{geometry}
+\usepackage{siunitx}
+\usepackage[american,siunitx]{circuitikz}
+\usepackage{xspace}
+
+\input{acronyms.tex}
+
+\usepackage[
+    backend=biber,
+    backref=true,
+    %style=authortitle-ibid,
+    %style=authoryear,
+    autocite=inline,
+    %refsection=subsection,
+    ]{biblatex}
+\addbibresource{references.bib}
+
+\NewDocumentCommand\sub{m}{\ensuremath{_\mathrm{#1}}\xspace}
+
+\NewDocumentCommand\vin{}{\ensuremath{v_i}\xspace}
+\NewDocumentCommand\rin{}{\ensuremath{R_i}\xspace}
+\NewDocumentCommand\vout{}{\ensuremath{v_o}\xspace}
+\NewDocumentCommand\rout{}{\ensuremath{r_o}\xspace}
+
+% Use uppercase for the command names since \ac is already defined
+\NewDocumentCommand\AC{}{\ac{ac}\xspace}
+\NewDocumentCommand\DC{}{\ac{dc}\xspace}
 
 \begin{document}
 
@@ -51,6 +77,8 @@
 %\section{RC Snubber}
 
 %\section{Diode Snubber}
+
+\printbibliography[heading=bibintoc,title=References]
 
 \end{document}
 

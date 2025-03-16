@@ -1,16 +1,10 @@
 \chapter{Basic Operational Amplifier Circuits}
-
+% TODO: add transimpedance amplifier
 Operational amplifiers are extremely useful and versatile circuits.
 This chapter presents basic application circuits which use operational amplifiers for amplification, buffering, summing, integrating, etc.
 
-The circuit schematics in this chapter also show a series input capacitor to block DC.
-The capacitor and resistors should be chosen appropriately to block only the desired range of low frequencies, or the capacitor should be removed to process DC signals.
-
-\section{Comparator}
-\begin{center}
-	\includegraphics{schematics/comparator.PNG}
-\end{center}
-A comparator is a very simple circuit that compares its input voltage $v_{i}$ to a DC reference voltage $V_{REF}$ and outputs $V_{CC}$ if $v_{i} > V_{REF}$ and $V_{EE}$ otherwise. It utilizes the operational amplifier's ideally infinite open loop gain to to force $v_{o}$ to $V_{CC}$ or $V_{EE}$ for even a very small input differential voltage ($v_{i} - V_{REF}$).
+The circuit schematics in this chapter also show a series input capacitor to block \DC.
+The capacitor and resistors should be chosen appropriately to block only the desired range of low frequencies, or the capacitor should be removed to process \DC signals.
 
 \section{Inverting amplifier}
 \begin{center}
@@ -18,34 +12,37 @@ A comparator is a very simple circuit that compares its input voltage $v_{i}$ to
 \draw (0, 0) node[op amp] (opamp) {}
 		(opamp.-) to[short,-*] ++(-1,0) coordinate(A)
 		(opamp.+) to[short,-*] ++(-1,0) coordinate(B)
-		(B) to[R=${R_3=R_1 \parallel R_2}$] ++(0,-2) node[ground](G){}
+		(B) to[R=$R_3$] ++(0,-2) node[ground](G){}
 		(B) to[short] ++(-2,0) coordinate(B2)
 		(B2) to[C=$C_2$] ++(0,-2) node[ground]{}
 		(opamp.out) to[short,*-o] ++(1,0) coordinate(C)
-		(A) to[R,l_=$R_1$] ++(-2,0) to[C=$C_1$] ++(-2,0) to[short,-o] ++(-1,0) node[above]{$v_i$}
-		(A) |- ++(1,1) coordinate[yshift=1ex] (L1) to[R=$R_2$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{$v_o$}
-;
+		(A) to[R,l_=$R_1$] ++(-2,0) to[C=$C_1$] ++(-2,0) to[short,-o] ++(-1,0) node[above]{\vin}
+		(A) |- ++(1,1) coordinate[yshift=1ex] (L1) to[R=$R_2$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout};
 \end{circuitikz}
 \end{center}
-% \begin{center}	\includegraphics[width=0.70\textwidth]{schematics/invertingopampamplifier.PNG}
-% \end{center}
 The op amp's non-inverting input has ideally no input bias current so no current flows through $R_3$ or $C_2$ and the non-inverting input is at ground potential.
-Due to the op amp's high open loop gain, the inverting input is also ideally at ground potential so Kirchhoff's Current Law (KCL) relates $v_i$ and $v_o$ through the inverting input node.
+Due to the op amp's high open loop gain, the inverting input is also ideally at ground potential so \ac{kcl} relates \vin and \vout through the inverting input node.
 There is ideally no input bias current into the op amp's inverting input so the current through the impedance between the input and the inverting input is equal to the current through $R_2$.
-In the passband the series capacitor $C_1$ adds minimal impedance so the current through $R_1$ is $v_i/R_1$.
-This is also the current through $R_2$. The $R_2$ terminal connected to the inverting input is at ground potential so the voltage across $R_2$ is equal to $v_o$.
+In the passband the series capacitor $C_1$ adds minimal impedance so the current through $R_1$ is $\vin/R_1$.
+This is also the current through $R_2$. The $R_2$ terminal connected to the inverting input is at ground potential so the voltage across $R_2$ is equal to \vout.
 The transfer function is therefore
 
 \textcolor{red}{
 \begin{equation}
-\frac{v_o}{v_i} = -\frac{R_2}{R_1}
+\frac{\vout}{\vin} = -\frac{R_2}{R_1}
 \label{eq:invertingopampamplifier}
 \end{equation}
 }
 
-$R_{3}$ is an optional resistor used to reduce the inverting amplifier's output DC offset error due to a real op amp's nonzero input bias currents.
-Its purpose is to introduce a small DC offset voltage at the non-inverting input which is equal to the small DC offset voltage at the inverting input.
-It should be set to
+Also, since the non-inverting input is at ground potential the input resistance is simply
+
+\textcolor{red}{
+\begin{equation}
+\rin = R_1
+\end{equation}
+}
+
+$R_{3}$ is typically a short circuit, but may be set to
 
 \textcolor{red}{
 \begin{equation}
@@ -53,7 +50,10 @@ R_3 = R_1 \parallel R_2
 \end{equation}
 }
 
-$C_2$ is an optional capacitor used with $R_3$ to reduce high frequency noise added by $R_3$.
+in order to reduce the inverting amplifier's output DC offset error caused by a real op amp's nonzero input bias currents.
+When used in this way, its purpose is to introduce a small DC offset voltage at the non-inverting input which is equal to the small DC offset voltage at the inverting input.
+
+$C_2$ is an optional capacitor used with non-zero $R_3$ to reduce high frequency noise added by $R_3$.
 $R_3$ is only needed to produce a DC offset and has no effect on the signal's transfer function, but it produces white thermal noise that can be attenuated by the low pass filter formed by $R_3$ and $C_2$.
 
 The bandwidth of this amplifier depends on the gain since voltage feedback op amps have a constant gain-bandwidth product -- increase the gain and the bandwidth decreases, decrease the gain and the bandwidth increases.
@@ -72,28 +72,35 @@ The op amp non-inverting amplifier also employs negative feedback, but in this c
 
 \textcolor{red}{
 \begin{equation}
-\frac{v_{o}}{v_{i}} = 1+\frac{R_{2}}{R_{1}}
+\frac{\vout}{\vin} = 1+\frac{R_2}{R_1}
 \label{eq:noninvertingopampamplifier}
 \end{equation}
 }
 
-As with the inverting amplifier, the gain equation can be derived using the fact that an ideal operational amplifier's input terminals are at the same voltage and by using KCL on the inverting input node. Similarly, $R_{3}$ may be replaced with a short but should equal $R_{1}||R_{2}$ to minimize the error caused by the op amp's input bias currents.
-\par The gain equation shows that this circuit is a voltage buffer if $R_{1} = R_{2}$, which is as simple as replacing the resistors with wires. The very low output impedance and very high input impedance of op amps ensures the buffer is a good voltage source (which ideally has zero impedance) while not loading down any circuitry that may be generating the desired voltage (such as a voltage divider composed of two resistors).
+As with the inverting amplifier, the gain equation can be derived using the fact that an ideal operational amplifier's input terminals are at the same voltage and by using \ac{kcl} on the inverting input node.
+Similarly, $R_3$ may be replaced with a short but should equal $R_1 \parallel R_2$ to minimize the error caused by the op amp's input bias currents.
+
+The gain equation shows that this circuit is a voltage buffer if $R_1 = R_2$, which is as simple as replacing the resistors with wires.
+The very low output impedance and very high input impedance of op amps ensures the buffer is a good voltage source (which ideally has zero impedance) while not loading down any circuitry that may be generating the desired voltage (such as a voltage divider composed of two resistors).
 
 \section{Inverting summing amplifier}
 \begin{center}
 	\includegraphics[width=0.70\textwidth]{schematics/invsummingamp.PNG}
 \end{center}
-\par This circuit multiplies each input voltage by a factor determined by a resistor ratio, sums these amplified voltages, and inverts the result. It is essentially an op amp inverting amplifier with multiple inputs. It is often used as an audio mixer, where multiple voltage signals must be combined into one (for example, voltage signals from microphones near a band's singer and each of its musical instruments must be combined into one signal for recording). The transfer function can be found by superposition of the inputs and, for the two input case, is
+
+This circuit multiplies each input voltage by a factor determined by a resistor ratio, sums these amplified voltages, and inverts the result.
+It is essentially an op amp inverting amplifier with multiple inputs.
+It is often used as an audio mixer, where multiple voltage signals must be combined into one (for example, voltage signals from multiple microphones which must be combined into one signal for recording).
+The transfer function can be found by superposition of the inputs and, for the two input case, is
 
 \textcolor{red}{
 \begin{equation}
-v_{o} = -\left(\frac{R_{3}}{R_{1}}v_{i1} + \frac{R_{3}}{R_{2}}v_{i2}\right)
+\vout = -\left(\frac{R_3}{R_1}v_{i1} + \frac{R_3}{R_2}v_{i2}\right)
 \label{eq:invertingsummingamplifier}
 \end{equation}
 }
 
-%\par To minimize the error due to the op amp's input bias currents $R_{5}$ should equal $R_{1}||R_{2}||R_{3}||R_{4}$.
+%To minimize the error due to the op amp's input bias currents $R_{5}$ should equal $R_{1}||R_{2}||R_{3}||R_{4}$.
 
 \section{Non-inverting summing amplifier}
 \begin{center}
@@ -102,19 +109,23 @@ v_{o} = -\left(\frac{R_{3}}{R_{1}}v_{i1} + \frac{R_{3}}{R_{2}}v_{i2}\right)
 The non-inverting summing amplifier is similar to the op amp non-inverting amplifier, except that it has multiple inputs. To analyze it, note that the inverting input voltage $v_{-}$ is
 
 \begin{equation}
-v_{-} = \frac{R_{4}}{R_{4}+R_{5}}v_{o}
+v_{-} = \frac{R_4}{R_4+R_5}\vout
 \end{equation}
 
-\noindent (assume for simplicity that $v_{MID} = 0$V) since $R_{4}$ and $R_{5}$ form a voltage divider. This is also the voltage at the non-inverting input and KCL can be used on the currents through the input resistors. This gives the transfer function:
+\noindent (assume for simplicity that $V\sub{ref} = \SI{0}{\V}$) since $R_4$ and $R_5$ form a voltage divider.
+This is also the voltage at the non-inverting input and \ac{kcl} can be used on the currents through the input resistors.
+This gives the transfer function:
 
 \textcolor{red}{
 \begin{equation}
-v_{o} = \frac{R_{4}+R_{5}}{R_{4}\left(\frac{1}{R_{1}} + \frac{1}{R_{2}} + \frac{1}{R_{3}}\right)}\left(\frac{v_{1}}{R_{1}} + \frac{v_{2}}{R_{2}} + \frac{v_{3}}{R_{3}}\right)
+\vout = \frac{R_4+R_5}{R_4\left(\frac{1}{R_1} + \frac{1}{R_2} + \frac{1}{R_3}\right)}\left(\frac{v_1}{R_1} + \frac{v_2}{R_2} + \frac{v_3}{R_3}\right)
 \label{eq:summingamp}
 \end{equation}
 }
 
-Determining the correct resistor values to use in order to achieve the desired gain for each input (and finding the standard resistor values that will do it) is slightly trickier than the inverting summing amplifier's case. For audio circuits the inverting summing amplifier is easier to work with since a voltage signal that has been inverted cannot be distinguished by the human ear from the same signal that has not -- only amplitude and frequency matter in this case, not phase. Other applications may also allow for an inversion, but if not the non-inverting summing amplifier works well.
+Determining the correct resistor values to use in order to achieve the desired gain for each input (and finding the standard resistor values that will do it) is slightly trickier than the inverting summing amplifier's case.
+For audio circuits the inverting summing amplifier is easier to work with since a voltage signal that has been inverted cannot be distinguished by the human ear from the same signal that has not -- only amplitude and frequency matter in this case, not phase.
+Other applications may also allow for an inversion, but if not the non-inverting summing amplifier works well.
 
 \section{Difference Amplifiers}
 
@@ -122,11 +133,14 @@ Determining the correct resistor values to use in order to achieve the desired g
 \begin{center}
 	\includegraphics{schematics/differenceamp.PNG}
 \end{center}
-In this configuration each of the two inputs is connected to one of the op amp's inputs through a resistor ($R_{1}$). Two additional resistors are used: a feedback resistor from the output to the inverting input of the op amp, and another resistor of equal value from the non-inverting input of the op amp to the common mode voltage (usually $V_{CC}/2$ for a single supply system and $GND$ for a dual supply system). Using the fact that an ideal op amp's inputs are at equal voltages and KCL on both the inverting and non-inverting inputs, the transfer function is
+In this configuration each of the two inputs is connected to one of the op amp's inputs through a resistor ($R_1$).
+Two additional resistors are used:
+a feedback resistor from the output to the inverting input of the op amp, and another resistor of equal value from the non-inverting input of the op amp to the common mode voltage (usually $V\sub{CC}/2$ for a single supply system and GND for a dual supply system).
+Using the fact that an ideal op amp's inputs are at equal voltages and \ac{kcl} on both the inverting and non-inverting inputs, the transfer function is
 
 \textcolor{red}{
 \begin{equation}
-v_{o} = \frac{R_{2}}{R_{1}}(v_{2}-v_{1})
+\vout = \frac{R_2}{R_1}(v_2-v_1)
 \label{eq:differenceamp}
 \end{equation}
 }
@@ -135,35 +149,39 @@ v_{o} = \frac{R_{2}}{R_{1}}(v_{2}-v_{1})
 \begin{center}
 	\includegraphics{schematics/highcmdifferenceamplifier.PNG}
 \end{center}
-This improved difference amplifier allows for a higher common-mode range because the resistors in series with the signal inputs $v_{1}$ and $v_{2}$ ($R_{1}$ and $R_{4}$, respectively) limit the currents into the op amps' inputs, increasing the voltage range within the op amp's drive capability.\footnote{Mancini, Ron., "Op Amps for Everyone", Texas Instruments, Inc., 2002, p. 418} The transfer function can be derived easily using superposition and the above transfer functions for inverting and non-inverting op amp amplifiers to determine $v_{o}$ in terms of all four inputs ($v_{1}$, $v_{2}$, $V_{CM1}$, and $V_{CM2}$). For $v_{1}$,
+This improved difference amplifier allows for a higher common-mode range because the resistors in series with the signal inputs $v_1$ and $v_2$ ($R_1$ and $R_4$, respectively) limit the currents into the op amps' inputs, increasing the voltage range within the op amp's drive capability. \autocite[418]{op-amps-for-everyone}
+
+The transfer function can be derived easily using superposition and the above transfer functions for inverting and non-inverting op amp amplifiers to determine \vout in terms of all four inputs ($v_1$, $v_2$, $V\sub{CM1}$, and $V\sub{CM2}$).
+For $v_1$,
 
 \begin{equation}
-v_{o} = \frac{R_{2}}{R_{1}}\frac{R_{5}}{R_{3}}v_{1}, v_{2} = V_{CM1} = V_{CM2} = 0
+\vout = \frac{R_2}{R_1}\frac{R_5}{R_3}v_1, v_2 = V\sub{CM1} = V\sub{CM2} = 0
 \end{equation}
 
-\noindent (the output of the first op amp is $-\frac{R_{2}}{R_{1}}v_{1}$, which is then amplified by $-\frac{R_{5}}{R_{3}}$). For $v_{2}$,
+\noindent (the output of the first op amp is $-(R_2/R_1)v_1$, which is then amplified by $-R_5/R_3$).
+For $v_2$,
 
 \begin{equation}
-v_{o} = -\frac{R_{5}}{R_{4}}v_{2}, v_{1} = V_{CM1} = V_{CM2} = 0
+\vout = -\frac{R_5}{R_4}v_2, v_1 = V\sub{CM1} = V\sub{CM2} = 0
 \end{equation}
 
-\noindent For $V_{CM1}$,
+\noindent For $V\sub{CM1}$,
 
 \begin{equation}
-v_{o} = -(1+\frac{R_{2}}{R_{1}})\frac{R_{5}}{R_{3}}V_{CM1}, v_{1} = v_{2} = V_{CM2} = 0
+\vout = -\left(1+\frac{R_2}{R_1}\right)\frac{R_5}{R_3}V\sub{CM1}, v_{1} = v_{2} = V\sub{CM2} = 0
 \end{equation}
 
-\noindent For $V_{CM2}$,
+\noindent For $V\sub{CM2}$,
 
 \begin{equation}
-v_{o} = (1+\frac{R_{5}}{R_{3}||R_{4}})V_{CM2} = (1+\frac{(R_{3}+R_{4})R_{5}}{R_{3}R_{4}})V_{CM2}, v_{1} = v_{2} = V_{CM2} = 0
+\vout = \left(1+\frac{R_5}{R_3 \parallel R_4}\right)V\sub{CM2} = \left(1+\frac{(R_3+R_4)R_5}{R_3R_4}\right)V\sub{CM2}, v_1 = v_2 = V\sub{CM2} = 0
 \end{equation}
 
 \noindent Putting it all together,
 
 \textcolor{red}{
 \begin{equation}
-v_{o} = \frac{R_{2}}{R_{1}}\frac{R_{5}}{R_{3}}v_{1} - \frac{R_{5}}{R_{4}}v_{2} - (1+\frac{R_{2}}{R_{1}})\frac{R_{5}}{R_{3}}V_{CM1} + (1+\frac{(R_{3}+R_{4})R_{5}}{R_{3}R_{4}})V_{CM2}
+\vout = \frac{R_2}{R_1}\frac{R_5}{R_3}v_1 - \frac{R_5}{R_4}v_2 - \left(1+\frac{R_2}{R_1}\right)\frac{R_5}{R_3}V\sub{CM1} + \left(1+\frac{(R_3+R_4)R_5}{R_3R_4}\right)V\sub{CM2}
 \label{eq:highcmdifferenceamplifier}
 \end{equation}
 }
@@ -172,7 +190,7 @@ v_{o} = \frac{R_{2}}{R_{1}}\frac{R_{5}}{R_{3}}v_{1} - \frac{R_{5}}{R_{4}}v_{2} -
 
 \textcolor{red}{
 \begin{equation}
-v_{o} = v_{1}-v_{2}-2V_{CM1}+3V_{CM2}
+\vout = v_1-v_2-2V\sub{CM1}+3V\sub{CM2}
 \label{eq:highcmdifferenceamplifier_simple}
 \end{equation}
 }
@@ -181,11 +199,12 @@ v_{o} = v_{1}-v_{2}-2V_{CM1}+3V_{CM2}
 \begin{center}
 	\includegraphics{schematics/differentiator.PNG}
 \end{center}
-The differentiator is similar to the inverting op amp amplifier except that there is no resistor in series between the input and the op amp's inverting input -- only a capacitor is used. The inverting input's voltage is equal to $v_{MID}$, and KCL on this node can be used along with a capacitor's I/V relationship ($i_{C} = C\frac{dv_{C}}{dt}$). The transfer function is thus
+The differentiator is similar to the inverting op amp amplifier except that there is no resistor in series between the input and the op amp's inverting input -- only a capacitor is used.
+The inverting input's voltage is equal to $v\sub{REF}$, and \ac{kcl} on this node can be used along with a capacitor's I/V relationship: $i\sub{C} = Cdv_C/dt$. The transfer function is thus
 
 \textcolor{red}{
 \begin{equation}
-v_{o}(t) = -RC\frac{dv_{i}(t)}{dt}
+\vout(t) = -RC\frac{d\vin(t)}{dt}
 \label{differentiator}
 \end{equation}
 }
@@ -194,32 +213,37 @@ v_{o}(t) = -RC\frac{dv_{i}(t)}{dt}
 
 \textcolor{red}{
 \begin{equation}
-\frac{v_{o}}{v_{i}}(s) = -sRC = -\jmath \omega RC
+\frac{\vout}{\vin}(s) = -sRC = -\jmath \omega RC
 \label{eq:differentiator_complex}
 \end{equation}
 }
 
-Unfortunately, the differentiator suffers from a high frequency noise problem; the circuit naturally amplifies high frequency signals so the output will oscillate unless all high frequency signals at the input are sufficiently attenuated. Since noise typically has high frequency components it can be very difficult to stabilize this circuit.
-\par One way to avoid the unwanted amplification of high frequency signals or noise is to place a resistor in series with the capacitor. This, of course, gives the differentiator the same topology as the op amp inverting amplifier! The difference is that the op amp inverting amplifier uses a much larger AC coupling capacitor to block very low frequency signals whose frequencies are below the range of frequencies the circuit is meant to operate on, while the capacitor in the differentiator is smaller to affect the appropriate range of frequencies. Reusing the analysis of the op amp inverting amplifier but replacing the input resistor with the impedance of the input resistor and capacitor, the transfer function (using the complex s) is $v_{o}(1+R_{I}C) = -sRCv_{i}$. If $R_{I}C$ is much less than the period $T$ of the signals the circuit must operate on, however, the equation simplifies to
+Unfortunately, the differentiator suffers from a high frequency noise problem; the circuit naturally amplifies high frequency signals so the output will oscillate unless all high frequency signals at the input are sufficiently attenuated.
+Since noise typically has high frequency components it can be very difficult to stabilize this circuit.
+
+One way to avoid the unwanted amplification of high frequency signals or noise is to place a resistor in series with the capacitor.
+This, of course, gives the differentiator the same topology as the op amp inverting amplifier!
+The difference is that the op amp inverting amplifier uses a much larger AC coupling capacitor to block very low frequency signals whose frequencies are below the range of frequencies the circuit is meant to operate on, while the capacitor in the differentiator is smaller to affect the appropriate range of frequencies.
+Reusing the analysis of the op amp inverting amplifier but replacing the input resistor with the impedance of the input resistor and capacitor, the transfer function (using the complex $s$) is $\vout(1+R\sub{i}C) = -sRC\vin$. If $R\sub{i}C$ is much less than the period $T$ of the signals the circuit must operate on, however, the equation simplifies to
 
 \textcolor{red}{
 \begin{equation}
-\frac{v_{o}}{v_{i}}(s) \approx -sRC
+\frac{\vout}{\vin}(s) \approx -sRC
 \label{eq:differentiator_series_cap}
 \end{equation}
 }
 
-which is the same as before.\footnote{Johnson, David E., "Operational Amplifier Circuits: Design and Application", Prentice-Hall, 1982, pp. 79-80}
+which is the same as before. \autocite[79-80]{op-amp-circuits-johnson}
 
 \section{Integrator}
 \begin{center}
 	\includegraphics[width=0.70\textwidth]{schematics/integrator.PNG}
 \end{center}
-The integrator is very similar to the differentiator -- just switch the resistor and capacitor. Using impedance and KCL again, the transfer function is
+The integrator is very similar to the differentiator -- just switch the resistor and capacitor. Using impedance and \ac{kcl} again, the transfer function is
 
 \textcolor{red}{
 \begin{equation}
-v_{o} = \frac{-1}{RC}\int v_{i}dt\ = \frac{-v_{i}}{sRC} = \frac{-v_{i}}{\jmath \omega RC}
+\vout = \frac{-1}{RC}\int \vin dt\ = \frac{-\vin}{sRC} = \frac{-\vin}{\jmath \omega RC}
 \label{eq:integrator}
 \end{equation}
 }
