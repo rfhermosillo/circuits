@@ -69,7 +69,7 @@ The op amp itself will exhibit temperature dependencies that affect the operatio
 % TODO: add capacitor between R1 and ground as in the "shelving amplifier" image, which would give a DC gain of 1 but AC gain
 \begin{center}
 	\begin{circuitikz}
-		\draw (0,0) node[above]{\vin} to[C=$C$, o-] ++(2,0) coordinate(in)
+		\draw (0,0) node[above]{\vin} to[C=$C$, o-*] ++(2,0) coordinate(in)
 		to[R=$R_3$] ++(0,-2) node[ground]{}
 		(in) to[short] ++(2,0) node[op amp, noinv input up, anchor=+](OA){}
 		(OA.out) to[R=$R_2$] ++(0,-2) coordinate(FB)

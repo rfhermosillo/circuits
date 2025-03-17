@@ -22,7 +22,7 @@
 \usepackage[
     backend=biber,
     backref=true,
-    %style=authortitle-ibid,
+    style=authortitle-ibid,
     %style=authoryear,
     autocite=inline,
     %refsection=subsection,
@@ -35,6 +35,8 @@
 \NewDocumentCommand\rin{}{\ensuremath{R_i}\xspace}
 \NewDocumentCommand\vout{}{\ensuremath{v_o}\xspace}
 \NewDocumentCommand\rout{}{\ensuremath{r_o}\xspace}
+\NewDocumentCommand\rpi{}{\ensuremath{r_{\pi}}\xspace}
+% TODO: add Vth, Vbe, \gnd, \npn, \pnp, RL, \VT and \VTH (MOSFET threshold voltage), \BF (and what other betas?), \VGS, \VDS, \VCC, \VEE, \VDD, \VSS, \Vov for MOSFET overdrive
 
 % Use uppercase for the command names since \ac is already defined
 \NewDocumentCommand\AC{}{\ac{ac}\xspace}

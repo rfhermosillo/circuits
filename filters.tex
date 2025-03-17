@@ -1,6 +1,14 @@
 \chapter{Filters}
-This chapter presents a variety of filters (low pass, high pass, band pass, and band reject) using either passive or active components. First and second order filters are presented so that an $n$th-order filter can be constructed by cascading these first and/or second order filters.
-\par Some of these filters can be designed either as Butterworth or Chebyshev filters. Butterworth filters are characterized by their maximally flat magnitude in the pass band for all-pole filters (so that, for all-pole filters, they are the best approximation to an ideal filter in the pass band). Unfortunately, the magnitude of a Butterworth filter poorly approximates an ideal filter near the cutoff frequency in that the magnitude does not drop particularly sharply from the pass band to the stop band. Higher order Butterworth filters transition more sharply and thus better approximate an ideal filter, but they are still inferior to filters like the Chebyshev filter. Chebyshev filters' magnitude response best approximates an ideal filter for all-pole filters in that the magnitude drops very sharply from the pass band to the stop band, but their frequency response has ripples in the pass band (i.e. the magnitude oscillates in the pass band, particularly near the cutoff frequency). Higher order Chebyshev filters transition even more sharply than lower order Chebyshev filters. Thus, Butterworth and Chebyshev filters solve different problems -- the former approximates  an ideal filter best in the pass band while the latter is a better approximation near the cutoff frequency.\footnote{Johnson, David E., "Operational Amplifier Circuits: Design and Application", Prentice-Hall, 1982, pp. 107, 111}
+This chapter presents a variety of filters (low pass, high pass, band pass, and band reject) using either passive or active components.
+First and second order filters are presented so that an $n$th-order filter can be constructed by cascading these first and/or second order filters.
+
+Some of these filters can be designed either as Butterworth or Chebyshev filters.
+Butterworth filters are characterized by their maximally flat magnitude in the pass band for all-pole filters (so that, for all-pole filters, they are the best approximation to an ideal filter in the pass band).
+Unfortunately, the magnitude of a Butterworth filter poorly approximates an ideal filter near the cutoff frequency in that the magnitude does not drop particularly sharply from the pass band to the stop band.
+Higher order Butterworth filters transition more sharply and thus better approximate an ideal filter, but they are still inferior to filters like the Chebyshev filter.
+Chebyshev filters' magnitude response best approximates an ideal filter for all-pole filters in that the magnitude drops very sharply from the pass band to the stop band, but their frequency response has ripples in the pass band (i.e. the magnitude oscillates in the pass band, particularly near the cutoff frequency).
+Higher order Chebyshev filters transition even more sharply than lower order Chebyshev filters.
+Thus, Butterworth and Chebyshev filters solve different problems -- the former approximates an ideal filter best in the pass band while the latter is a better approximation near the cutoff frequency. \autocite[107, 111]{op-amp-circuits-johnson}
 % figure out where to put the tables for the coefficients
 
 \section{Low pass filters}
@@ -61,25 +69,28 @@ a\omega_{c} = \frac{1}{C_{2}}\left(\frac{1}{R_{1}} + \frac{1}{R_{2}}\right) - \f
 K = 1 + \frac{R_{4}}{R_{3}}
 \end{equation}
 
-To minimize the error due to the op amp's input bias currents we need \begin{equation}
-R_{3}||R_{4} = R_{1} + R_{2}
+To minimize the error due to the op amp's input bias currents we need
+
+\begin{equation}
+R_3 \parallel R_4 = R_1 + R_2
 \end{equation}
 
-With these restrictions and a desired gain K and -3dB angular frequency $\omega_{c}$ we have the following equations for deciding the resistor and capacitor values:\footnote{Ibid., pp. 118-119}
+With these restrictions and a desired gain $K$ and \SI{-3}{\dB} angular frequency $\omega_{c}$ we have the following equations for deciding the resistor and capacitor values \autocite[118-119]{op-amp-circuits-johnson}:
+
 \begin{equation}
-C_{1} \leq \frac{(a^{2}+4b(K-1))C_{2}}{4b}
+C_1 \leq \frac{(a^2+4b(K-1))C_2}{4b}
 \end{equation}
 \begin{equation}
-R_{1} = \frac{2}{(aC_{2}+\sqrt{(a^{2}+4b(K-1))C_{2}^{2} - 4bC_{1}C_{2}})\omega_{c}}
+R_1 = \frac{2}{(aC_2+\sqrt{(a^2+4b(K-1))C_2^2 - 4b C_1 C_2})\omega_{c}}
 \end{equation}
 \begin{equation}
-R_{2} = \frac{1}{bC_{1}C_{2}R_{1}\omega_{c}^{2}}
+R_2 = \frac{1}{bC_1 C_2 R_1\omega_{c}^2}
 \end{equation}
 \begin{equation}
-R_{3} = \frac{K(R_{1}+R_{2})}{K-1}, K > 1
+R_3 = \frac{K(R_1 + R_2)}{K-1}, K > 1
 \end{equation}
 \begin{equation}
-R_{4} = K(R_{1}+R_{2})
+R_4 = K(R_1 + R_2)
 \end{equation}
 
 The parameters $a$ and $b$ depend on the type of filter desired -- Butterworth or Chebyshev. See Appendix A for tables of these parameter values.
@@ -100,20 +111,23 @@ The biquad filter requires two more op amps than the above VCVS filters. Two of 
 
 The resistors relate to the general transfer function as follows:
 \begin{equation}
-R_{4} = \frac{1}{\omega_{c}C}
+R_4 = \frac{1}{\omega_{c}C}
 \end{equation}
 \begin{equation}
-R_{1} = \frac{R_{4}}{Kb}
+R_1 = \frac{R_4}{Kb}
 \end{equation}
 \begin{equation}
-R_{2} = \frac{R_{4}}{a}
+R_2 = \frac{R_4}{a}
 \end{equation}
 \begin{equation}
-R_{3} = \frac{R_{4}}{b}
+R_3 = \frac{R_4}{b}
 \end{equation}
 
-Why use the biquad circuit with its three op amps when a second order filter can be built with only one op amp? Notice that the above equations for the biquad circuit's resistor and capacitor choices that the biquad is easier to tune than the VCVS filters. In particular, the desired $\omega_{c}$ determines the values of $C$ and $R_{4}$, and with $R_{4}$ chosen parameter $a$ is determined solely by $R_{2}$, parameter $b$ can be determined by $R_{3}$, and with $R_{3}$ determined $R_{1}$ can be used to set the filter's gain $K$. The VCVS filters require two different capacitor values and the resistors affect one or more values of $a$, $b$, and $K$ in nontrivial ways. The biquad circuit's offer of simpler tuning may be worth the two additional op amps.
-\footnote{Ibid., pp. 120-122}
+Why use the biquad circuit with its three op amps when a second order filter can be built with only one op amp?
+Notice that the above equations for the biquad circuit's resistor and capacitor choices that the biquad is easier to tune than the VCVS filters.
+In particular, the desired $\omega_{c}$ determines the values of $C$ and $R_4$, and with $R_4$ chosen parameter $a$ is determined solely by $R_2$, parameter $b$ can be determined by $R_3$, and with $R_3$ determined $R_1$ can be used to set the filter's gain $K$.
+The VCVS filters require two different capacitor values and the resistors affect one or more values of $a$, $b$, and $K$ in nontrivial ways.
+The biquad circuit's offer of simpler tuning may be worth the two additional op amps. \autocite[120-122]{op-amp-circuits-johnson}
 
 \section{High pass filters}
 
@@ -121,11 +135,11 @@ Why use the biquad circuit with its three op amps when a second order filter can
 \begin{center}
 	\includegraphics{schematics/rcHPfilter.PNG}
 \end{center}
-The resistor and capacitor have been switched in this case so the impedance divider is $v_{o} = \frac{R}{R+\frac{1}{sC}}v_{I}$. Rearranged, this is
+The resistor and capacitor have been switched in this case so the impedance divider is $\vout = \frac{R}{R+\frac{1}{sC}}\vin$. Rearranged, this is
 
 \textcolor{red}{
 \begin{equation}
-\frac{v_{o}}{v_{i}}(s) = \frac{sRC}{sRC+1}
+\frac{\vout}{\vin}(s) = \frac{sRC}{sRC+1}
 \label{eq:rcHPfilter}
 \end{equation}
 }
@@ -157,21 +171,21 @@ The VCVS second-order high pass filter is the same as the VCVS second-order low 
 \end{equation}
 }
 
-the resistors determine the transfer function as follows:\footnote{Ibid., pp. 130-131}
+the resistors determine the transfer function as follows \autocite[130-131]{op-amp-circuits-johnson}:
 \begin{equation}
-R_{1} = \frac{4b}{(a+\sqrt{a^{2}+8b(K-1)})\omega_{c}C}
+R_1 = \frac{4b}{(a+\sqrt{a^2 + 8b(K-1)})\omega_{c}C}
 \end{equation}
 \begin{equation}
-R_{2} = \frac{b}{\omega_{c}^{2}C^{2}R_{1}}
+R_2 = \frac{b}{\omega_{c}^2 C^2 R_1}
 \end{equation}
 \begin{equation}
-R_{3} = \frac{KR_{1}}{K-1}, K > 1
+R_3 = \frac{KR_1}{K-1}, K > 1
 \end{equation}
 \begin{equation}
-R_{4} = KR_{1}
+R_4 = KR_1
 \end{equation}
 
-If no gain is needed (i.e. $K = 1$) $R_{3}$ can be removed and $R_{4}$ replaced with a short.
+If no gain is needed (i.e. $K = 1$) $R_3$ can be removed and $R_4$ replaced with a short.
 
 \subsection{Second-order biquad high pass filter}
 \begin{center}
@@ -186,21 +200,21 @@ This circuit is a biquad filter that implements the general second-order high pa
 \end{equation}
 }
 
-with an inverting gain (i.e. $K < 0$). The resistors relate to the transfer function as follows:\footnote{Ibid., p. 131}
+with an inverting gain (i.e. $K < 0$). The resistors relate to the transfer function as follows \autocite[131]{op-amp-circuits-johnson}:
 \begin{equation}
-R_{1} = \frac{b}{aK\omega_{c}C}
+R_1 = \frac{b}{aK\omega_{c}C}
 \end{equation}
 \begin{equation}
-R_{2} = KR_{1}
+R_2 = KR_1
 \end{equation}
 \begin{equation}
-R_{3} = \frac{b}{\omega_{c}C}
+R_3 = \frac{b}{\omega_{c}C}
 \end{equation}
 \begin{equation}
-R_{4} = \frac{1}{K\omega_{c}C}
+R_4 = \frac{1}{K\omega_{c}C}
 \end{equation}
 \begin{equation}
-R_{5} = \frac{1}{\omega_{c}C}
+R_5 = \frac{1}{\omega_{c}C}
 \end{equation}
 
 \section{Band pass filters}
@@ -218,18 +232,18 @@ The general equation for the transfer function of this filter is
 \end{equation}
 }
 
-Since this is a band pass filter $\frac{v_{o}}{v_{i}} \approx 0$ as $s \rightarrow 0$ and $s \rightarrow \infty$ but the gain is nonzero in the midband. The resistors are related to the transfer function as follows:\footnote{Ibid., pp. 138-139}
+Since this is a band pass filter $\frac{v_{o}}{v_{i}} \approx 0$ as $s \rightarrow 0$ and $s \rightarrow \infty$ but the gain is nonzero in the midband. The resistors are related to the transfer function as follows \autocite[138-139]{op-amp-circuits-johnson}:
 \begin{equation}
-R_{1} = \frac{2}{\alpha \omega_{o}C}
+R_1 = \frac{2}{\alpha \omega_{o}C}
 \end{equation}
 \begin{equation}
-R_{2} = \frac{2}{(-\beta+\sqrt{(\alpha - \beta)^{2} + 8\gamma})\omega_{o}C}
+R_2 = \frac{2}{(-\beta+\sqrt{(\alpha - \beta)^2 + 8\gamma})\omega_{o}C}
 \end{equation}
 \begin{equation}
-R_{3} = \frac{1}{\gamma \omega_{o}^{2}C^{2}}\left(\frac{1}{R_{1}} + \frac{1}{R_{2}}\right)
+R_3 = \frac{1}{\gamma \omega_{o}^2 C^2}\left(\frac{1}{R_1} + \frac{1}{R_2}\right)
 \end{equation}
 \begin{equation}
-R_{4} = 2R_{3}
+R_4 = 2R_3
 \end{equation}
 
 \subsection{Biquad band pass filter}
@@ -247,19 +261,19 @@ The biquad band pass filter has the same transfer function as the VCVS band pass
 
 with the four resistors related to the transfer function as
 \begin{equation}
-R_{1} = \frac{1}{\alpha \omega_{o}C}
+R_1 = \frac{1}{\alpha \omega_{o}C}
 \end{equation}
 \begin{equation}
-R_{2} = \frac{1}{\beta \omega_{o}C}
+R_2 = \frac{1}{\beta \omega_{o}C}
 \end{equation}
 \begin{equation}
-R_{3} = \frac{1}{\gamma \omega_{o}C}
+R_3 = \frac{1}{\gamma \omega_{o}C}
 \end{equation}
 \begin{equation}
-R_{4} = \frac{1}{\omega_{o}C}
+R_4 = \frac{1}{\omega_{o}C}
 \end{equation}
 
-Again, the VCVS band pass filter is simpler than the biquad but the latter is easier to tune than the former.\footnote{Ibid., p.140}
+Again, the VCVS band pass filter is simpler than the biquad but the latter is easier to tune than the former. \autocite[140]{op-amp-circuits-johnson}
 
 \section{Band reject filters}
 
@@ -267,27 +281,37 @@ Again, the VCVS band pass filter is simpler than the biquad but the latter is ea
 \begin{center}
 	\includegraphics{schematics/passiveTwinTbandrejectfilter.PNG}
 \end{center}
-The intuitive way to understand that this circuit is a band reject filter is to realize that these are two T circuits in parallel -- one T circuit is composed of the two $R_{1}$ resistors and $C_{2}$ capacitor, and the other T circuit is composed of the two $C_{1}$ capacitors and $R_{2}$ resistor. Consider each T individually: the T circuit with the two resistors is a low pass filter since $C_{2}$ shorts the middle node to ground for high frequency signals and passes low frequency signals, and the T circuit with the two capacitors blocks low frequency signals but shorts $v_{i}$ to $v_{o}$ for high frequency signals. Low frequencies can pass through the low pass T circuit and high frequencies can pass through the high pass T circuit, but there is a middle frequency that can pass through neither. Thus, this Twin-T circuit is a band reject filter.
-\par There are several methods for deriving the notch frequency $f = \frac{\omega}{2\pi}$ (the frequency which is attenuated the most), but the derivation is lengthy and not presented here. The result of the derivation is\footnote{Bond, C. \href{http://www.crbond.com/circuit\_analysis.htm}{http://www.crbond.com/circuit\_analysis.htm}}
-\begin{equation}R_{1}C_{1} = 4R_{2}C_{2}
+The intuitive way to understand that this circuit is a band reject filter is to realize that these are two T circuits in parallel -- one T circuit is composed of the two $R_1$ resistors and $C_2$ capacitor, and the other T circuit is composed of the two $C_1$ capacitors and $R_2$ resistor.
+Consider each T individually:
+the T circuit with the two resistors is a low pass filter since $C_2$ shorts the middle node to ground for high frequency signals and passes low frequency signals, and the T circuit with the two capacitors blocks low frequency signals but shorts \vin to \vout for high frequency signals.
+Low frequencies can pass through the low pass T circuit and high frequencies can pass through the high pass T circuit, but there is a middle frequency that can pass through neither.
+Thus, this Twin-T circuit is a band reject filter.
+
+There are several methods for deriving the notch frequency, but the derivation is lengthy and not presented here.
+The result of the derivation \autocite[see][]{cr-bond-twin-t-notch} is
+
+\begin{equation}
+	R_1C_1 = 4R_2C_2
 \end{equation}
 
 and
 
 \begin{equation}
-\omega^{2} = \frac{1}{2R_{1}R_{2}C_{2}^{2}}
+\omega^{2} = \frac{1}{2R_1R_2C_2^{2}}
 \end{equation}
 
-Usually the components are chosen such that $R_{2} = \frac{R_{1}}{2}$ and $C_{2} = 2C_{1}$. In that case, the notch frequency is
+Usually the components are chosen such that $R_{2} = R_1/2$ and $C_2 = 2C_1$.
+In that case, the notch frequency is
 
 \textcolor{red}{
 \begin{equation}
-f = \frac{\omega}{2\pi} = \frac{1}{2\pi R_{1}C_{1}}
+f = \frac{\omega}{2\pi} = \frac{1}{2\pi R_1C_1}
 \label{eq:passiveTwinTnotchfreq}
 \end{equation}
 }
 
-The limitation of this circuit is its quality factor $Q = \frac{1}{\Delta\Omega}$, where $\Delta\Omega$ is the difference between the -3dB frequencies just above and below the notch frequency $f$. For the passive Twin-T band reject filter,
+The limitation of this circuit is its quality factor $Q = 1/\Delta\Omega$, where $\Delta\Omega$ is the difference between the \SI{-3}{\dB} frequencies just above and below the notch frequency $f$.
+For the passive Twin-T band reject filter,
 
 \textcolor{red}{
 \begin{equation}
@@ -296,7 +320,7 @@ Q = \frac{1}{4}
 \end{equation}
 }
 
-An active Twin-T band reject filter (which uses the Twin-T topology in the feedback path of an operational amplifier) improves $Q$.\footnote{Mancini, Ron., "Op Amps for Everyone", Texas Instruments, Inc., 2002, p. 321}
+An active Twin-T band reject filter (which uses the Twin-T topology in the feedback path of an operational amplifier) improves $Q$. \autocite[321]{op-amps-for-everyone}
 
 \subsection{Passive Wien-Robinson band reject filter}
 \begin{center}
@@ -304,8 +328,11 @@ An active Twin-T band reject filter (which uses the Twin-T topology in the feedb
 \end{center}
 The Wien-Robinson band reject filter takes a single-ended input and produces a differential output. It can be analyzed intuitively by realizing that it is composed of a voltage divider ($R_{3}$ and $R_{4}$) in parallel with a band pass filter. $R_{1}$, $R_{2}$, $C_{1}$, and $C_{2}$ form a band pass filter because $C_{1}$ blocks low frequencies (no current passes through $C_{1}$ to create a voltage across $R_{2}$ and $C_{2}$) and $C_{2}$ shorts the band pass filter's output (the negative terminal of $v_{o}$) to ground, but midrange frequencies are passed to the output. The overall circuit acts as a band reject filter because at low and high frequencies the negative terminal of $v_{o}$ is grounded so that $v_{o} = \frac{R_{3}}{R_{2}+R_{3}}v_{i}$
 At middle frequencies $v_{i}$ is passed to the negative terminal of $v_{o}$ so that the terminals of $v_{o}$ are equal and $v_{o} = 0$.
-\par This circuit suffers from a low $Q$, just as the passive Twin-T band reject filter (the two have similar values of $Q$).\footnote{Mancini, Ron., "Op Amps for Everyone", Texas Instruments, Inc., 2002, p. 323} It too can be improved with the use of operational amplifiers.
-\par Typically the component values are chosen such that $R_{1} = R_{2}$ and $C_{1} = C_{2}$. In that case the notch frequency is\footnote{Mancini, Ron., "Op Amps for Everyone", Texas Instruments, Inc., 2002, p. 324}
+
+This circuit suffers from a low $Q$, just as the passive Twin-T band reject filter (the two have similar values of $Q$). \autocite[323]{op-amps-for-everyone}
+It too can be improved with the use of operational amplifiers.
+
+Typically the component values are chosen such that $R_{1} = R_{2}$ and $C_{1} = C_{2}$. In that case the notch frequency \autocite[324]{op-amps-for-everyone} is
 
 \textcolor{red}{
 \begin{equation}
@@ -334,7 +361,7 @@ f = \frac{1}{2\pi R_{1}C_{1}}
 \end{equation}
 }
 
-It can be shown that the active Twin-T filter's $Q$ is\footnote{Mancini, Ron., "Op Amps for Everyone", Texas Instruments, Inc., 2002, p. 322}
+It can be shown \autocite[322]{op-amps-for-everyone} that the active Twin-T filter's $Q$ is
 
 \textcolor{red}{
 \begin{equation}
@@ -354,7 +381,7 @@ With $K$ and $Q$ given in terms of the circuit components, the overall transfer 
 \begin{center}
 	\includegraphics{schematics/activeWien-Robinsonbandrejectfilter.PNG}
 \end{center}
-The active Wien-Robinson band reject filter uses two operational amplifiers to improve the passive Wien-Robinson filter's $Q$ and gain. The resistors and capacitors which compose the passive Wien-Robinson filter are labeled the same in the above schematic of the active version as in the passive version from before. The inputs of the operational amplifier which drives the overall output are driven by the filter's differential output. The other operational amplifier is configured simply as an inverting amplifier. The transfer function can be written as\footnote{Mancini, Ron., "Op Amps for Everyone", Texas Instruments, Inc., 2002, p. 323}
+The active Wien-Robinson band reject filter uses two operational amplifiers to improve the passive Wien-Robinson filter's $Q$ and gain. The resistors and capacitors which compose the passive Wien-Robinson filter are labeled the same in the above schematic of the active version as in the passive version from before. The inputs of the operational amplifier which drives the overall output are driven by the filter's differential output. The other operational amplifier is configured simply as an inverting amplifier. The transfer function \autocite[323]{op-amps-for-everyone} can be written as
 
 \textcolor{red}{
 \begin{equation}
@@ -402,15 +429,16 @@ This band reject filter's transfer function can be written in the form
 \end{equation}
 }
 
-The op amp is configured as a voltage follower and, since it is the only active device in the circuit, the overall gain of this filter can never exceed unity even in the pass band. To achieve the desired transfer function the resistors must be chosen as follows:\footnote{Ibid., pp. 145-146}
+The op amp is configured as a voltage follower and, since it is the only active device in the circuit, the overall gain of this filter can never exceed unity even in the pass band.
+To achieve the desired transfer function the resistors must be chosen as follows \autocite[145-146]{op-amp-circuits-johnson}:
 \begin{equation}
-R_{1} = \frac{1}{2Q\omega_{o}C}
+R_1 = \frac{1}{2Q\omega_{o}C}
 \end{equation}
 \begin{equation}
-R_{2} = \frac{2Q}{\omega_{o}C}
+R_2 = \frac{2Q}{\omega_{o}C}
 \end{equation}
 \begin{equation}
-R_{3} = \frac{R_{1}R_{2}}{R_{1}+R_{2}}
+R_3 = \frac{R_1 R_2}{R_1 + R_2}
 \end{equation}
 
 \subsection{Biquad band reject filter}
@@ -426,24 +454,25 @@ A band reject filter's transfer function can also be written in the form
 \end{equation}
 }
 
-Unlike the VCVS band reject filter above, this biquad filter can provide an inverting gain greater than unity (the $\alpha$ term), and it can also achieve a much higher $Q$. The resistors relate to the transfer function as\footnote{Ibid., pp. 146-148}
+Unlike the VCVS band reject filter above, this biquad filter can provide an inverting gain greater than unity (the $\alpha$ term), and it can also achieve a much higher $Q$.
+The resistors relate to the transfer function as \autocite[146-148]{op-amp-circuits-johnson}
 \begin{equation}
-R_{1} = \frac{1}{\alpha \beta \omega_{o}C}
+R_1 = \frac{1}{\alpha \beta \omega_{o}C}
 \end{equation}
 \begin{equation}
-R_{2} = \alpha R_{1}
+R_2 = \alpha R_1
 \end{equation}
 \begin{equation}
-R_{3} = \frac{1}{\sqrt{\gamma} \omega_{o}C}
+R_3 = \frac{1}{\sqrt{\gamma} \omega_{o}C}
 \end{equation}
 \begin{equation}
-R_{4} = \frac{1}{\alpha \omega_{o}C}
+R_4 = \frac{1}{\alpha \omega_{o}C}
 \end{equation}
 \begin{equation}
-R_{5} = \frac{\sqrt{\gamma}}{\alpha \omega_{o}C}
+R_5 = \frac{\sqrt{\gamma}}{\alpha \omega_{o}C}
 \end{equation}
 \begin{equation}
-R_{6} = \frac{1}{\omega_{o}C}
+R_6 = \frac{1}{\omega_{o}C}
 \end{equation}
 
 \section{All pass filters}
@@ -451,7 +480,7 @@ R_{6} = \frac{1}{\omega_{o}C}
 \begin{center}
 	\includegraphics{schematics/1storderallpassfilter.PNG}
 \end{center}
-This circuit\footnote{Circuit courtesy of: Mancini, Ron., "Op Amps for Everyone", Texas Instruments, Inc., 2002, p. 328} has a gain of 1 at low frequencies and -1 at high frequencies. At low frequencies, neither the capacitor nor the non-inverting input of the operational amplifier draw any current, so there is no voltage drop across $R_{2}$ and the non-inverting input has a voltage equal to $v_{i}$. The inverting input also has a voltage equal to $v_{i}$ since the operational amplifier's inputs must be at (approximately) equal voltage, so there is no voltage drop across the $R_{1}$ connected to $v_{i}$. Since there is no voltage drop across (or current through) the $R_{1}$ connected to $v_{i}$, there is no current through (or voltage drop across) the $R_{1}$ connected to $v_{o}$. Thus, $v_{o} = v_{i}$ at low frequencies. At high frequencies, the non-inverting input of the operational amplifier is shorted to ground since the capacitor has a very low impedance. $R_{2}$ does nothing to the circuit since it is only connected to $v_{i}$ and $GND$ and the circuit looks like an inverting op amp amplifier, which of course has a gain of -1 when the gain and feedback resistors ($R_{1}$, in this case) are equal.
+This circuit \autocite[328]{op-amps-for-everyone} has a gain of 1 at low frequencies and -1 at high frequencies. At low frequencies, neither the capacitor nor the non-inverting input of the operational amplifier draw any current, so there is no voltage drop across $R_{2}$ and the non-inverting input has a voltage equal to $v_{i}$. The inverting input also has a voltage equal to $v_{i}$ since the operational amplifier's inputs must be at (approximately) equal voltage, so there is no voltage drop across the $R_{1}$ connected to $v_{i}$. Since there is no voltage drop across (or current through) the $R_{1}$ connected to $v_{i}$, there is no current through (or voltage drop across) the $R_{1}$ connected to $v_{o}$. Thus, $v_{o} = v_{i}$ at low frequencies. At high frequencies, the non-inverting input of the operational amplifier is shorted to ground since the capacitor has a very low impedance. $R_{2}$ does nothing to the circuit since it is only connected to $v_{i}$ and $GND$ and the circuit looks like an inverting op amp amplifier, which of course has a gain of -1 when the gain and feedback resistors ($R_{1}$, in this case) are equal.
 \par It is not intuitively obvious, however, that the circuit has a gain of magnitude 1 in the middle of the frequency spectrum, so we need to derive the transfer function. Let the voltage at the operational amplifier's inputs be $v_{x}$. $R_{2}$ and $C_{1}$ act as a voltage divider for $v_{i}$ at the operational amplifier's inverting input, so
 \begin{equation}v_{x} = \frac{\frac{1}{sC_{1}}}{R_{2}+\frac{1}{sC_{1}}}v_{i} = \frac{v_{i}}{1+sR_{2}C_{1}}
 \end{equation}
@@ -522,18 +551,20 @@ The phase $\angle H(j\omega)$ is
 
 This circuit implements the second order all pass filter transfer function, with the resistors chosen such that
 \begin{equation}
-a\omega_{o} = \frac{2}{R_{2}C}
+a\omega_{o} = \frac{2}{R_2 C}
 \end{equation}
 \begin{equation}
-b\omega_{o}^{2} = \frac{1}{R_{1}R_{2}C^{2}}
+b\omega_{o}^2 = \frac{1}{R_1 R_2 C^2}
 \end{equation}
 \begin{equation}
-K = \frac{R_{4}}{R_{3}+R_{4}}
+K = \frac{R_4}{R_3 + R_4}
 \end{equation}
 \begin{equation}
-4R_{1}R_{4} = R_{2}R_{3}
+4R_1 R_4 = R_2 R_3
 \end{equation}
-For minimum DC offset, choose\footnote{Ibid., pp. 151-153}
+
+For minimum DC offset, choose \autocite[151-153]{op-amp-circuits-johnson}:
+
 \begin{equation}
-R_{2} = \frac{R_{3}R_{4}}{R_{3}+R_{4}}
+R_2 = \frac{R_3 R_4}{R_3 + R_4}
 \end{equation}
