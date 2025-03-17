@@ -31,11 +31,11 @@
 
 \NewDocumentCommand\sub{m}{\ensuremath{_\mathrm{#1}}\xspace}
 
-\NewDocumentCommand\vin{}{\ensuremath{v_i}\xspace}
+\NewDocumentCommand\vin{o}{\ensuremath{v_{i\IfValueT{#1}{#1}}}\xspace}
 \NewDocumentCommand\rin{}{\ensuremath{R_i}\xspace}
-\NewDocumentCommand\vout{}{\ensuremath{v_o}\xspace}
-\NewDocumentCommand\rout{}{\ensuremath{r_o}\xspace}
-\NewDocumentCommand\rpi{}{\ensuremath{r_{\pi}}\xspace}
+\NewDocumentCommand\vout{o}{\ensuremath{v_{o}\IfValueT{#1}{#1}}\xspace}
+\NewDocumentCommand\rout{o}{\ensuremath{r_{o\IfValueT{#1}{#1}}}\xspace}
+\NewDocumentCommand\rpi{o}{\ensuremath{r_{\pi\IfValueT{#1}{#1}}}\xspace}
 % TODO: add Vth, Vbe, \gnd, \npn, \pnp, RL, \VT and \VTH (MOSFET threshold voltage), \BF (and what other betas?), \VGS, \VDS, \VCC, \VEE, \VDD, \VSS, \Vov for MOSFET overdrive
 
 % Use uppercase for the command names since \ac is already defined
