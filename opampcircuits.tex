@@ -3,8 +3,28 @@
 Operational amplifiers are extremely useful and versatile circuits.
 This chapter presents basic application circuits which use operational amplifiers for amplification, buffering, summing, integrating, etc.
 
-The circuit schematics in this chapter also show a series input capacitor to block \DC.
-The capacitor and resistors should be chosen appropriately to block only the desired range of low frequencies, or the capacitor should be removed to process \DC signals.
+Basic analysis of op amp circuits uses the following properties of an ideal op amp:
+
+\begin{enumerate}
+	\item Input impedance is very high / infinite for the inverting and non-inverting inputs, implying zero / negligible input bias current for both inputs.
+	\item Output impedance is (nearly) 0.
+	\item Very high / infinite open loop gain, implying that \emph{with negative feedback} an op amp's inputs must be at (nearly) the same voltage in order to produce a finite output.
+\end{enumerate}
+
+While these ideal properties can simplify the analysis of op amp circuits, it is important not to completely neglect an op amp's non-idealities.
+For example, an op amp's inputs much each have a \DC path for the small but nonzero input bias currents to flow to ground -- without such a path an input bias current will bias the op amp's input to an undesired voltage.
+
+Relaxing these assumptions will result in a more complicated but realistic analysis (especially when substituting with values from a real op amp whose specifications are available), which may allow the design to be substantially improved.
+For example, it is more realistic to assume that an op amp's input bias currents are nonzero but equal in magnitude and direction.
+This assumption leads to the principle that the equivalent impedances to ground at each input should be equal so that the input bias currents produce equal (small) bias voltages at each input, thus minimizing the offset voltage caused by imbalanced bias voltages.
+
+Many of the following circuits' gain is determined by a ratio of resistors, which makes the circuits very insensitive to temperature if the resistors are manufactured by the same process.
+All circuit elements are temperature dependent, but since the gain is determined by a ratio of resistors the change in resistance of one resistor due to temperature should be very similar to the change in resistance of the other and the gain undergoes no net change.
+The op amp itself will exhibit temperature dependencies that affect the operation of the circuit, but modern op amps are designed to have very low temperature drifts so the op amp usually will not cause the circuit to become overly temperature sensitive.
+
+The bandwidth of many op amp amplifiers depends on the gain since most op amps use voltage feedback (rather than current feedback), and such op amps have a constant gain-bandwidth product -- increase the gain and the bandwidth decreases, decrease the gain and the bandwidth increases.
+The gain-bandwidth product depends on the particular op amp used to implement a circuit, so the bandwidth cannot be calculated for a generic op amp.
+Multiple op amp inverting (or non-inverting) amplifiers with lower individual gains can be cascaded to achieve a high bandwidth along with high overall gain if the specified gain and bandwidth of an application circuit exceeds an individual op amp's gain-bandwidth product.
 
 \section{Inverting amplifier}
 \begin{center}
@@ -13,19 +33,17 @@ The capacitor and resistors should be chosen appropriately to block only the des
 		(opamp.-) to[short,-*] ++(-1,0) coordinate(A)
 		(opamp.+) to[short,-*] ++(-1,0) coordinate(B)
 		(B) to[R=$R_3$] ++(0,-2) node[ground](G){}
-		(B) to[short] ++(-2,0) coordinate(B2)
-		(B2) to[C=$C_2$] ++(0,-2) node[ground]{}
+		(B) to[short] ++(-1,0) coordinate(B2)
+		(B2) to[C, l_=$C_1$] ++(0,-2) node[ground]{}
 		(opamp.out) to[short,*-o] ++(1,0) coordinate(C)
-		(A) to[R,l_=$R_1$] ++(-2,0) to[C=$C_1$] ++(-2,0) to[short,-o] ++(-1,0) node[above]{\vin}
-		(A) |- ++(1,1) coordinate[yshift=1ex] (L1) to[R=$R_2$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout}
-		;
+		(A) to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-1,0) node[above]{\vin}
+		(A) |- ++(1,1) coordinate[yshift=1ex] (L1) to[R=$R_2$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout};
 \end{circuitikz}
 \end{center}
-The op amp's non-inverting input has ideally no input bias current so no current flows through $R_3$ or $C_2$ and the non-inverting input is at ground potential.
-Due to the op amp's high open loop gain, the inverting input is also ideally at ground potential so \ac{kcl} relates \vin and \vout through the inverting input node.
-There is ideally no input bias current into the op amp's inverting input so the current through the impedance between the input and the inverting input is equal to the current through $R_2$.
-In the passband the series capacitor $C_1$ adds minimal impedance so the current through $R_1$ is $\vin/R_1$.
-This is also the current through $R_2$. The $R_2$ terminal connected to the inverting input is at ground potential so the voltage across $R_2$ is equal to \vout.
+The op amp's non-inverting input has ideally no input bias current so no current flows through $R_3$ or $C_1$ and the non-inverting input is at ground potential.
+Due to the op amp's high open loop gain, the inverting input is also ideally at ground potential (this is a ``virtual ground'' condition) so \ac{kcl} relates \vin and \vout through the inverting input node.
+There is ideally no input bias current into the op amp's inverting input so the current through $R_1$ (which is $\vin/R_1$) is equal to the current through $R_2$.
+The $R_2$ terminal connected to the inverting input is at ground potential so the voltage across $R_2$ is equal to \vout.
 The transfer function is therefore
 
 \textcolor{red}{
@@ -35,15 +53,18 @@ The transfer function is therefore
 \end{equation}
 }
 
-Also, since the non-inverting input is at ground potential the input resistance is simply
+Since the non-inverting input is at ground potential the input resistance is simply
 
 \textcolor{red}{
 \begin{equation}
-\rin = R_1
+	\rin = R_1
 \end{equation}
 }
 
-$R_{3}$ is typically a short circuit, but may be set to
+Unfortunately, this is considerably lower than the op amp's input impedance.
+\rin can be improved by maximizing $R_1$ (and therefore also $R_2$) while not making the resistors so high than the op amp's input bias currents produce a significant bias voltages. 
+
+$R_3$ is typically a short circuit, but may be set to
 
 \textcolor{red}{
 \begin{equation}
@@ -51,71 +72,50 @@ R_3 = R_1 \parallel R_2
 \end{equation}
 }
 
-in order to reduce the inverting amplifier's output DC offset error caused by a real op amp's nonzero input bias currents.
-When used in this way, its purpose is to introduce a small DC offset voltage at the non-inverting input which is equal to the small DC offset voltage at the inverting input.
+in order to balance the bias voltages produced by the op amp's input bias currents.
 
-$C_2$ is an optional capacitor used with non-zero $R_3$ to reduce high frequency noise added by $R_3$.
-$R_3$ is only needed to produce a DC offset and has no effect on the signal's transfer function, but it produces white thermal noise that can be attenuated by the low pass filter formed by $R_3$ and $C_2$.
+$C_1$ is an optional capacitor used with non-zero $R_3$ to reduce high frequency noise added by $R_3$.
+$R_3$ is only needed to produce a \DC offset and has no effect on the signal's transfer function, but it produces white thermal noise that can be attenuated by the low pass filter formed by $R_3$ and $C_1$.
 
-The bandwidth of this amplifier depends on the gain since voltage feedback op amps have a constant gain-bandwidth product -- increase the gain and the bandwidth decreases, decrease the gain and the bandwidth increases.
-If the gain-bandwidth product of the application circuit exceeds the op amp's gain-bandwidth product, multiple op amp inverting (or non-inverting) amplifiers with lower individual gains can be cascaded to achieve a high overall gain but a high bandwidth.
-The op amp gain is also restricted in most cases to greater than unity since many op amps are unstable for a gain less than unity.
-
-One important characteristic of this amplifier is that the gain is determined by a ratio of resistors, which makes the circuit very insensitive to temperature if the resistors are manufactured by the same process.
-All circuit elements are temperature dependent (resistors included) but since the gain is determined by a ratio of resistors the change in resistance of one resistor due to temperature should be very similar to the change in resistance of the other and the gain undergoes no net change.
-The op amp itself will exhibit temperature dependencies that affect the operation of the circuit, but modern op amps are designed to have very low temperature drifts so the op amp usually will not cause the circuit to become overly temperature sensitive.
+A capacitor \C may be inserted between \vin and \R[1] if the amplifier must be \AC-coupled.
+The op amp's inverting input is at virtual ground so the time constant is \(\tau = R_1 C\) and \(\fcutoff = 1/(2\pi R_1 C)\) as given by \eqref{eq:1storderHPFtimeconstant}.
 
 \section{Non-inverting amplifier}
-% TODO: add capacitor between R1 and ground as in the "shelving amplifier" image, which would give a DC gain of 1 but AC gain
-% TODO: copy to the first-order LP/HP active filters, then remove the input network
 \begin{center}
 	\begin{circuitikz}
-		\draw (0,0) node[above]{\vin} to[C=$C$, o-*] ++(2,0) coordinate(in)
-		to[R=$R_3$] ++(0,-2) node[ground]{}
-		(in) to[short] ++(2,0) node[op amp, noinv input up, anchor=+](OA){}
+		\draw (0,0) node[above]{\vin} to[short, o-] ++(1,0)
+		node[op amp, noinv input up, anchor=+](OA){}
 		(OA.out) to[R=$R_2$] ++(0,-2) coordinate(FB)
 		to[R=$R_1$] ++(0,-2) node[ground]{}
 		(OA.out) to[short, *-o] ++(1,0) node[above]{\vout}
-		(OA.-) -- (FB -| OA.-) to[short, -*] (FB)
-		;
+		(OA.-) -- (FB -| OA.-) to[short, -*] (FB);
 	\end{circuitikz}
 \end{center}
-	
-The op amp non-inverting amplifier also employs negative feedback, but in this case the input voltage is connected to the op amp's non-inverting input. The gain equation is slightly different:
+
+The resistors form what is essentially a voltage divider network, with \vout as the voltage divider ``input'' and the op amp's inverting input as the voltage divider ``output''. The inputs of an op amp with negative feedback are ideally at the same voltage, so the voltage divider ``output'' is \vin.
+Such a voltage divider has the relation \[\vin = \frac{R_1}{R_1 + R_2}\vout\]
+Rearranging gives the transfer function:
 
 \textcolor{red}{
 \begin{equation}
-\frac{\vout}{\vin} = 1+\frac{R_2}{R_1}
-\label{eq:noninvertingopampamplifier}
+	\frac{\vout}{\vin} = 1+\frac{R_2}{R_1}
+	\label{eq:noninvertingopampamplifier}
 \end{equation}
 }
 
-As with the inverting amplifier, the gain equation can be derived using the fact that an ideal operational amplifier's input terminals are at the same voltage and by using \ac{kcl} on the inverting input node.
+The transfer function shows that this circuit is a voltage buffer if \(R_1 = R_2\), which is as simple as replacing the resistors with wires.
+The input impedance of this amplifier is the same as the op amp's input impedance, which is much higher than can be achieved with the inverting amplifier's \rin.
+The very high input impedance and very low output impedance of op amps ensures the non-inverting amplifier/buffer is a good voltage source.
 
-$C$ and $R_3$ may be added as a high-pass filter in order to block \DC.
-$R_3$ is necessary to provide a \DC path for the op amp's input bias current, and sets the corner frequency for the input high-pass filter along with $C$.
-Use
+One option if this amplifier must be \AC-coupled is to add a passive \(RC\) filter in series with the input, which produces the first-order active \ac{hpf} shown on page \pageref{sec:active1storderHPF}.
+It is not enough to simply add a series capacitor -- a resistor to \gnd is necessary to provide a \DC path for the op amp's input bias current and to set the filter cutoff frequency.
+Set the resistor \(R = R_1 \parallel R_2\) to minimize the error caused by the op amp's input bias currents, then set the capacitor \C to achieve the desired cutoff frequency \(\fcutoff = 1/(2\pi R C)\) as given in \eqref{eq:rcHPFcutoff}.
+Unfortunately, this option reduces the amplifier's input resistance to \(\rin = R\) in the passband.
 
-\textcolor{red}{
-\begin{equation}
-R_3 = R_1 \parallel R_2
-\end{equation}
-}
-
-to minimize the error caused by the op amp's input bias currents, then set $C$ for the desired corner frequency.
-
-By inspection
-
-\textcolor{red}{
-\begin{equation}
-\rin = R_3 \parallel R_+
-\end{equation}
-}
-
-at the frequencies of interest, where $R_+$ is the input resistance of the op amp's non-inverting input (which is ideally infinite).
-
-The gain equation shows that this circuit is a voltage buffer if $R_1 = R_2$, which is as simple as replacing the resistors with wires.
-The very low output impedance and very high input impedance of op amps ensures the buffer is a good voltage source (which ideally has zero impedance) while not loading down any circuitry that may be generating the desired voltage (such as a voltage divider composed of two resistors).
+Another option, if the signal is \AC but \DC does not need to be blocked, is to insert a capacitor \C between \R[1] and \gnd.
+The capacitor is an open circuit for \DC, which makes denominator in \eqref{eq:noninvertingopampamplifier} very large and the \DC gain approximately 1;
+in the passband the capacitor is a short circuit so the gain is unaffected.
+The capacitor sees an equivalent resistance to \gnd of \(R_1 + R_2\) so the cutoff frequency is \(\fcutoff = 1/(2\pi(R_1 + R_2)C\).
 
 \section{Inverting summing amplifier}
 \begin{center}

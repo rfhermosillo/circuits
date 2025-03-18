@@ -13,6 +13,21 @@ Thus, Butterworth and Chebyshev filters solve different problems -- the former a
 
 \section{Low pass filters}
 
+The canonical form of a first-order low pass filter is
+
+\begin{equation}
+	H(s) = K\frac{1}{1 + \tau s}
+	\label{eq:1storderLPF}
+\end{equation}
+
+where \(K\) is its \DC gain.
+Its cutoff frequency is
+
+\begin{equation}
+	\fcutoff = \frac{1}{2\pi\tau}
+	\label{eq:1storderLPFtimeconstant}
+\end{equation}
+
 \subsection{RC low pass passive filter}
 \begin{center}
 	\begin{circuitikz}
@@ -28,8 +43,14 @@ Rearranging, this is
 
 \textcolor{red}{
 \begin{equation}
-\frac{v_{o}}{v_{i}}(s) = \frac{1}{sRC+1}
-\label{eq:rcLPfilter}
+\frac{\vout}{\vin}(s) = \frac{1}{1 + sRC}
+\label{eq:rcLPF}
+\end{equation}
+}
+
+\textcolor{red}{
+\begin{equation}
+	\fcutoff = \frac{1}{2\pi R C}
 \end{equation}
 }
 
@@ -37,10 +58,19 @@ For low frequencies ($s \to 0$) $\vout/\vin \approx 1$ (all the voltage falls ac
 
 \subsection{First-order low pass active filter}
 \begin{center}
-	\includegraphics{schematics/1storderLPfilter.PNG}
+	\begin{circuitikz}
+		\draw (0,0) node[above]{\vin} to[C=$R_1$, o-*] ++(2,0) coordinate(in)
+		to[C=$C$] ++(0,-2) node[ground]{}
+		(in) to[short] ++(2,0) node[op amp, noinv input up, anchor=+](OA){}
+		(OA.out) to[R=$R_3$] ++(0,-2) coordinate(FB)
+		to[R=$R_2$] ++(0,-2) node[ground]{}
+		(OA.out) to[short, *-o] ++(1,0) node[above]{\vout}
+		(OA.-) -- (FB -| OA.-) to[short, -*] (FB);
+	\end{circuitikz}
 \end{center}
+
 The analysis of this circuit follows a similar approach as the op amp amplifier circuits.
-The voltage at the inverting input (and thus the non-inverting input) is \[v_- = \frac{R_2}{R_2 + R_3}\vout\] (assuming for simplicity that $V\sub{MID} = \SI{0}{V}$) since $R_2$ and $R_3$ form a voltage divider.
+The voltage at the inverting input (and thus the non-inverting input) is \[v_- = \frac{R_2}{R_2 + R_3}\vout\] since $R_2$ and $R_3$ form a voltage divider.
 \ac{kcl} on the non-inverting input node then relates this voltage with the input.
 The transfer function is thus
 
@@ -148,6 +178,21 @@ The biquad circuit's offer of simpler tuning may be worth the two additional op 
 
 \section{High pass filters}
 
+The canonical form of a first-order high pass filter is
+
+\begin{equation}
+	H(s) = K\frac{\tau s}{1 + \tau s}
+	\label{eq:1storderHPF}
+\end{equation}
+
+where \(K\) is its \DC gain.
+Its cutoff frequency is
+
+\begin{equation}
+	\fcutoff = \frac{1}{2\pi\tau}
+	\label{eq:1storderHPFtimeconstant}
+\end{equation}
+
 \subsection{RC high pass passive filter}
 \begin{center}
 	\begin{circuitikz}
@@ -162,20 +207,39 @@ Rearranged, this is
 
 \textcolor{red}{
 \begin{equation}
-\frac{\vout}{\vin}(s) = \frac{sRC}{sRC+1}
-\label{eq:rcHPfilter}
+	\frac{\vout}{\vin}(s) = \frac{sRC}{1 + sRC}
+	\label{eq:rcHPF}
+\end{equation}
+}
+
+By inspection its cutoff frequency is
+
+\textcolor{red}{
+\begin{equation}
+	\fcutoff = \frac{1}{2\pi R C}
+	\label{eq:rcHPFcutoff}
 \end{equation}
 }
 
 \subsection{First-order high pass active filter}
+\label{sec:active1storderHPF}
 \begin{center}
-	\includegraphics{schematics/1storderHPfilter.PNG}
+	\begin{circuitikz}
+		\draw (0,0) node[above]{\vin} to[C=$C$, o-*] ++(2,0) coordinate(in)
+		to[R=$R_1$] ++(0,-2) node[ground]{}
+		(in) to[short] ++(2,0) node[op amp, noinv input up, anchor=+](OA){}
+		(OA.out) to[R=$R_3$] ++(0,-2) coordinate(FB)
+		to[R=$R_2$] ++(0,-2) node[ground]{}
+		(OA.out) to[short, *-o] ++(1,0) node[above]{\vout}
+		(OA.-) -- (FB -| OA.-) to[short, -*] (FB);
+	\end{circuitikz}
 \end{center}
+
 Following the same approach as with the low pass active filter (using the resistor divider formed by $R_2$ and $R_3$ to calculate the op amp's input voltage in terms of \vout and using \ac{kcl} on the non-inverting input), the transfer function of the high pass filter is
 
 \textcolor{red}{
-\begin{equation}\frac{\vout}{\vin}(s) = \frac{sR_1 C \left(1 + \frac{R_3}{R_2}\right)}{sR_1 C + 1}
-\label{eq:1storderHPfilter}
+\begin{equation}\frac{\vout}{\vin}(s) = \left(1 + \frac{R_3}{R_2}\right)\frac{sR_1 C}{sR_1 C + 1}
+\label{eq:active1storderHPF}
 \end{equation}
 }
 
@@ -623,7 +687,7 @@ K = \frac{R_4}{R_3 + R_4}
 4R_1 R_4 = R_2 R_3
 \end{equation}
 
-For minimum DC offset, choose \autocite[151-153]{op-amp-circuits-johnson}:
+For minimum \DC offset, choose \autocite[151-153]{op-amp-circuits-johnson}:
 
 \begin{equation}
 R_2 = \frac{R_3 R_4}{R_3 + R_4}
