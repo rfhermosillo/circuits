@@ -94,8 +94,6 @@ Rearranging, this is
 
 By inspection its cutoff frequency is \(\wcutoff = R C\).
 
-% TODO: explain the problem with loading from the source and/or load
-
 \subsection{First-order \(RC\) passive \acl{hpf}}
 \begin{center}
 	\begin{circuitikz}
@@ -118,8 +116,7 @@ Rearranged, this is
 
 By inspection its cutoff frequency is \(\wcutoff = R C\).
 
-% TODO: rename these to non-inverting, and add the inverting first-order filters from page 8.88 of the ADI filters chapter
-\subsection{First-order active \acl{lpf}}
+\subsection{First-order non-inverting active \acl{lpf}}
 \begin{center}
 	\begin{circuitikz}
 		\draw (0,0) node[above]{\vin} to[R=$R_1$, o-*] ++(2,0) coordinate(in)
@@ -150,7 +147,7 @@ If gain is not needed, the op amp can be configured as a voltage buffer by remov
 % TODO: account for nonzero Rs? Then it should be Rs + R1 = R2 || R3
 If \R[2] and \R[3] are used, the three resistors should be chosen such that the filter formed by \R[1] and \C has the desired cutoff frequency and \(R_1 = R_2 \parallel R_3\) (the latter relationship minimizes the error due to the op amp's input bias currents).
 
-\subsection{First-order active \acl{hpf}}
+\subsection{First-order non-inverting active \acl{hpf}}
 \label{sec:active1storderHPF}
 \begin{center}
 	\begin{circuitikz}
@@ -178,17 +175,23 @@ As usual, the resistors should be chosen such that \(R_1 = R_2 \parallel R_3\) t
 In this circuit \R[1] and \C perform the same filtering function as the passive \(RC\) filter so the op amp isn't strictly necessary -- however, the op amp provides gain for the filter and can provide isolation of the \(RC\) filter from other circuit elements which might affect its performance.
 If gain is not needed, the op amp can be configured as a voltage buffer by removing \R[2] and replacing \R[3] with a short.
 
+% TODO: add the inverting first-order filters from page 8.88 of the ADI filters chapter
+% \subsection{First-order inverting active \acl{lpf}}
+% \subsection{First-order inverting active \acl{hpf}}
+
 \section{Second-order low and high pass filters}
 % TODO: rename the VCVS filters to Sallen-Key (see ADI filters p. 8.72)
 \subsection{Second-order \acs{vcvs} active \acl{lpf}}
 \begin{center}
 	\includegraphics{schematics/2ndorder_vcvs_LPfilter.PNG}
 \end{center}
-This second order \ac{vcvs} low pass filter is similar in topology to the the above first order low pass filter except that it includes an extra resistor and capacitor. The full derivation of the input/output relationship requires a somewhat lengthy manipulation of equations, but it requires only three facts: (1) the voltage at the input terminals, which is $\frac{R_{3}}{R_{3}+R_{4}}v_{o}$ (again assuming that $v_{MID} = 0V$), (2) the nodal equation at the non-inverting input, and (3) the nodal equation at the node common to $R_{1}$, $R_{2}$, and $C_{2}$. This circuit is a second order filter so the transfer function is of the form
+This second order \ac{vcvs} low pass filter is similar in topology to the the above first order low pass filter except that it includes an extra resistor and capacitor.
+The full derivation of the input/output relationship requires a somewhat lengthy manipulation of equations, but it requires only three facts: (1) the voltage at the input terminals, which is $\frac{R_3}{R_3 + R_4}\vout$ (again assuming that $v\sub{MID} = \SI{0}{\V}$), (2) the nodal equation at the non-inverting input, and (3) the nodal equation at the node common to $R_1$, $R_2$, and $C_2$.
+This circuit is a second order filter so the transfer function is of the form
 
 \textcolor{red}{
 \begin{equation}
-\frac{v_{o}}{v_{i}}(s) = \frac{Kb\omega_{c}^{2}}{s^{2} + a\omega_{c}s + b\omega_{c}^{2}}
+\frac{\vout}{\vin}(s) = \Hs = \frac{K b \wcutoff^2}{s^{2} + a\wcutoff s + b\wcutoff^2}
 \label{eq:2ndorder_vcvs_LPfilter}
 \end{equation}
 }
@@ -196,13 +199,13 @@ This second order \ac{vcvs} low pass filter is similar in topology to the the ab
 In this case
 
 \begin{equation}
-b\omega_{c}^{2} = \frac{1}{R_{1}R_{2}C_{1}C_{2}}
+b\wcutoff^2 = \frac{1}{R_1 R_2 C_1 C_2}
 \end{equation}
 \begin{equation}
-a\omega_{c} = \frac{1}{C_{2}}\left(\frac{1}{R_{1}} + \frac{1}{R_{2}}\right) - \frac{R_{4}}{R_{2}R_{3}C_{1}}
+a\wcutoff = \frac{1}{C_2}\left(\frac{1}{R_1} + \frac{1}{R_2}\right) - \frac{R_4}{R_2 R_3 C_1}
 \end{equation}
 \begin{equation}
-K = 1 + \frac{R_{4}}{R_{3}}
+K = 1 + \frac{R_4}{R_3}
 \end{equation}
 
 To minimize the error due to the op amp's input bias currents we need
@@ -211,16 +214,16 @@ To minimize the error due to the op amp's input bias currents we need
 R_3 \parallel R_4 = R_1 + R_2
 \end{equation}
 
-With these restrictions and a desired gain $K$ and \SI{-3}{\dB} angular frequency $\omega_{c}$ we have the following equations for deciding the resistor and capacitor values \autocite[118-119]{op-amp-circuits-johnson}:
+With these restrictions and a desired gain $K$ and \wcutoff we have the following equations for deciding the resistor and capacitor values \autocite[118-119]{op-amp-circuits-johnson}:
 
 \begin{equation}
-C_1 \leq \frac{(a^2+4b(K-1))C_2}{4b}
+C_1 \leq \frac{(a^2 + 4b(K-1))C_2}{4b}
 \end{equation}
 \begin{equation}
-R_1 = \frac{2}{(aC_2+\sqrt{(a^2+4b(K-1))C_2^2 - 4b C_1 C_2})\omega_{c}}
+R_1 = \frac{2}{(a C_2+\sqrt{(a^2 + 4b(K-1))C_2^2 - 4b C_1 C_2})\wcutoff}
 \end{equation}
 \begin{equation}
-R_2 = \frac{1}{bC_1 C_2 R_1\omega_{c}^2}
+R_2 = \frac{1}{bC_1 C_2 R_1\wcutoff^2}
 \end{equation}
 \begin{equation}
 R_3 = \frac{K(R_1 + R_2)}{K-1}, K > 1
@@ -231,7 +234,7 @@ R_4 = K(R_1 + R_2)
 
 The parameters $a$ and $b$ depend on the type of filter desired -- Butterworth or Chebyshev.
 Check Butterworth and Chebyshev coefficient tables for these parameter values.
-% add appendix for the Butterworth and Chebyshev a and b coefficient parameters
+% TODO: add appendix for the Butterworth and Chebyshev a and b coefficient parameters
 
 \subsection{Second-order \acs{vcvs} \acl{hpf}}
 \begin{center}
@@ -241,23 +244,23 @@ The \ac{vcvs} second-order high pass filter is the same as the \ac{vcvs} second-
 
 \textcolor{red}{
 \begin{equation}
-\frac{v_{o}}{v_{i}}(s) = \frac{Ks^{2}}{s^{2} + \frac{a}{b}\omega_{c}s + \frac{\omega_{c}^{2}}{b}}
+\frac{\vout}{\vin}(s) = \Hs = \frac{Ks^2}{s^2 + \frac{a}{b}\wcutoff s + \frac{\wcutoff^2}{b}}
 \label{eq:2ndorder_vcvs_HPfilter}
 \end{equation}
 }
 
 the resistors determine the transfer function as follows \autocite[130-131]{op-amp-circuits-johnson}:
 \begin{equation}
-R_1 = \frac{4b}{(a+\sqrt{a^2 + 8b(K-1)})\omega_{c}C}
+R_1 = \frac{4b}{(a+\sqrt{a^2 + 8b(K-1)})\wcutoff C}
 \end{equation}
 \begin{equation}
-R_2 = \frac{b}{\omega_{c}^2 C^2 R_1}
+R_2 = \frac{b}{\wcutoff^2 C^2 R_1}
 \end{equation}
 \begin{equation}
-R_3 = \frac{KR_1}{K-1}, K > 1
+R_3 = \frac{K R_1}{K-1}, K > 1
 \end{equation}
 \begin{equation}
-R_4 = KR_1
+R_4 = K R_1
 \end{equation}
 
 If no gain is needed (i.e. $K = 1$) $R_3$ can be removed and $R_4$ replaced with a short.
@@ -274,14 +277,14 @@ Instead, the resistors and capacitors are simply given in terms of the general s
 
 \textcolor{red}{
 \begin{equation}
-\frac{v_{o}}{v_{i}}(s) = \frac{Kb\omega_{c}^{2}}{s^{2} + a\omega_{c}s + b\omega_{c}^{2}}
+\frac{\vout}{\vin}(s) = \Hs = \frac{Kb\wcutoff^2}{s^2 + a\wcutoff s + b\wcutoff^2}
 \label{eq:2ndorderbiquadLPfilter}
 \end{equation}
 }
 
 The resistors relate to the general transfer function as follows:
 \begin{equation}
-R_4 = \frac{1}{\omega_{c}C}
+R_4 = \frac{1}{\wcutoff C}
 \end{equation}
 \begin{equation}
 R_1 = \frac{R_4}{Kb}
@@ -295,7 +298,7 @@ R_3 = \frac{R_4}{b}
 
 Why use the biquad circuit with its three op amps when a second order filter can be built with only one op amp?
 Notice that the above equations for the biquad circuit's resistor and capacitor choices that the biquad is easier to tune than the \ac{vcvs} filters.
-In particular, the desired $\omega_{c}$ determines the values of $C$ and $R_4$, and with $R_4$ chosen parameter $a$ is determined solely by $R_2$, parameter $b$ can be determined by $R_3$, and with $R_3$ determined $R_1$ can be used to set the filter's gain $K$.
+In particular, the desired \wcutoff determines the values of $C$ and $R_4$, and with $R_4$ chosen parameter $a$ is determined solely by $R_2$, parameter $b$ can be determined by $R_3$, and with $R_3$ determined $R_1$ can be used to set the filter's gain $K$.
 The \ac{vcvs} filters require two different capacitor values and the resistors affect one or more values of $a$, $b$, and $K$ in nontrivial ways.
 The biquad circuit's offer of simpler tuning may be worth the two additional op amps. \autocite[120-122]{op-amp-circuits-johnson}
 
@@ -307,7 +310,7 @@ This circuit is a biquad filter that implements the general second-order high pa
 
 \textcolor{red}{
 \begin{equation}
-\frac{v_{o}}{v_{i}}(s) = \frac{Ks^{2}}{s^{2} + \frac{a}{b}\omega_{c}s + \frac{\omega_{c}^{2}}{b}}
+\frac{\vout}{\vin}(s) = \Hs = \frac{Ks^2}{s^2 + \frac{a}{b}\wcutoff s + \frac{\wcutoff^2}{b}}
 \label{eq:2ndorderbiquadHPfilter}
 \end{equation}
 }
@@ -315,19 +318,19 @@ This circuit is a biquad filter that implements the general second-order high pa
 with an inverting gain (i.e. $K < 0$).
 The resistors relate to the transfer function as follows \autocite[131]{op-amp-circuits-johnson}:
 \begin{equation}
-R_1 = \frac{b}{aK\omega_{c}C}
+R_1 = \frac{b}{a K\wcutoff C}
 \end{equation}
 \begin{equation}
-R_2 = KR_1
+R_2 = K R_1
 \end{equation}
 \begin{equation}
-R_3 = \frac{b}{\omega_{c}C}
+R_3 = \frac{b}{\wcutoff C}
 \end{equation}
 \begin{equation}
-R_4 = \frac{1}{K\omega_{c}C}
+R_4 = \frac{1}{K\wcutoff C}
 \end{equation}
 \begin{equation}
-R_5 = \frac{1}{\omega_{c}C}
+R_5 = \frac{1}{\wcutoff C}
 \end{equation}
 
 \section{Band pass filters}
@@ -340,7 +343,7 @@ The general equation for the transfer function of this filter is
 
 \textcolor{red}{
 \begin{equation}
-\frac{v_{o}}{v_{i}}(s) = \frac{\alpha \omega_{o}s}{s^{2}+\beta \omega_{o}s + \gamma \omega_{o}^{2}}
+\frac{\vout}{\vin}(s) = \Hs = \frac{\alpha \wcutoff s}{s^2+\beta \wcutoff s + \gamma \wcutoff^2}
 \label{eq:vcvs_bandpass}
 \end{equation}
 }
@@ -348,13 +351,13 @@ The general equation for the transfer function of this filter is
 Since this is a band pass filter $\vout/\vin \approx 0$ as $s \to 0$ and $s \to \infty$ but the gain is nonzero in the midband.
 The resistors are related to the transfer function as follows \autocite[138-139]{op-amp-circuits-johnson}:
 \begin{equation}
-R_1 = \frac{2}{\alpha \omega_{o}C}
+R_1 = \frac{2}{\alpha \wcutoff C}
 \end{equation}
 \begin{equation}
-R_2 = \frac{2}{(-\beta+\sqrt{(\alpha - \beta)^2 + 8\gamma})\omega_{o}C}
+R_2 = \frac{2}{(-\beta+\sqrt{(\alpha - \beta)^2 + 8\gamma})\wcutoff C}
 \end{equation}
 \begin{equation}
-R_3 = \frac{1}{\gamma \omega_{o}^2 C^2}\left(\frac{1}{R_1} + \frac{1}{R_2}\right)
+R_3 = \frac{1}{\gamma \wcutoff^2 C^2}\left(\frac{1}{R_1} + \frac{1}{R_2}\right)
 \end{equation}
 \begin{equation}
 R_4 = 2R_3
@@ -368,23 +371,23 @@ The biquad band pass filter has the same transfer function as the \ac{vcvs} band
 
 \textcolor{red}{
 \begin{equation}
-\frac{v_{o}}{v_{i}}(s) = \frac{\alpha \omega_{o}s}{s^{2}+\beta \omega_{o}s + \gamma \omega_{o}^{2}}
+\frac{\vout}{\vin}(s) = \Hs = \frac{\alpha \wcutoff s}{s^2 + \beta\wcutoff s + \gamma \wcutoff^2}
 \label{eq:biquad_bandpass}
 \end{equation}
 }
 
 with the four resistors related to the transfer function as
 \begin{equation}
-R_1 = \frac{1}{\alpha \omega_{o}C}
+R_1 = \frac{1}{\alpha \wcutoff C}
 \end{equation}
 \begin{equation}
-R_2 = \frac{1}{\beta \omega_{o}C}
+R_2 = \frac{1}{\beta \wcutoff C}
 \end{equation}
 \begin{equation}
-R_3 = \frac{1}{\gamma \omega_{o}C}
+R_3 = \frac{1}{\gamma \wcutoff C}
 \end{equation}
 \begin{equation}
-R_4 = \frac{1}{\omega_{o}C}
+R_4 = \frac{1}{\wcutoff C}
 \end{equation}
 
 Again, the \ac{vcvs} band pass filter is simpler than the biquad but the latter is easier to tune than the former. \autocite[140]{op-amp-circuits-johnson}
@@ -405,16 +408,16 @@ There are several methods for deriving the notch frequency, but the derivation i
 The result of the derivation \autocite[see][]{cr-bond-twin-t-notch} is
 
 \begin{equation}
-	R_1C_1 = 4R_2C_2
+	R_1 C_1 = 4R_2C_2
 \end{equation}
 
 and
 
 \begin{equation}
-\omega^{2} = \frac{1}{2R_1R_2C_2^{2}}
+\omega^{2} = \frac{1}{2 R_1 R_2 C_2^2}
 \end{equation}
 
-Usually the components are chosen such that $R_{2} = R_1/2$ and $C_2 = 2C_1$.
+Usually the components are chosen such that $R_2 = R_1/2$ and $C_2 = 2C_1$.
 In that case, the notch frequency is
 
 \textcolor{red}{
@@ -447,7 +450,7 @@ The pass band gain $K$ is thus simply
 
 \textcolor{red}{
 \begin{equation}
-K = 1 + \frac{R_{4}}{R_{3}}
+K = 1 + \frac{R_4}{R_3}
 \end{equation}
 }
 
@@ -457,7 +460,7 @@ Assuming the typical case of $R_2 = R_1/2$ and $C_2 = 2C_1$,
 
 \textcolor{red}{
 \begin{equation}
-f = \frac{1}{2\pi R_{1}C_{1}}
+f = \frac{1}{2\pi R_1 C_1}
 \end{equation}
 }
 
@@ -465,7 +468,7 @@ It can be shown \autocite[322]{op-amps-for-everyone} that the active Twin-T filt
 
 \textcolor{red}{
 \begin{equation}
-Q = \frac{1}{2(2-k)} = \frac{R_{3}}{2(R_{3}-R_{4})}
+Q = \frac{1}{2(2-k)} = \frac{R_3}{2(R_3 - R_4)}
 \end{equation}
 }
 
@@ -473,7 +476,7 @@ With $K$ and $Q$ given in terms of the circuit components, the overall transfer 
 
 \textcolor{red}{
 \begin{equation}
-\frac{\vout}{\vin}(s) = \frac{K(s^2 + 1)}{s^2 + \frac{s}{Q} + 1} = \frac{\frac{R_3 + R_4}{R_3}(s^2 + 1)}{s^2 + \frac{2(R_3 - R_4)}{R_3}s+1}
+\frac{\vout}{\vin}(s) = \Hs = \frac{K(s^2 + 1)}{s^2 + \frac{s}{Q} + 1} = \frac{\frac{R_3 + R_4}{R_3}(s^2 + 1)}{s^2 + \frac{2(R_3 - R_4)}{R_3}s+1}
 \end{equation}
 }
 
@@ -484,7 +487,7 @@ With $K$ and $Q$ given in terms of the circuit components, the overall transfer 
 The Wien-Robinson band reject filter takes a single-ended input and produces a differential output.
 It can be analyzed intuitively by realizing that it is composed of a voltage divider ($R_3$ and $R_4$) in parallel with a band pass filter.
 $R_1$, $R_2$, $C_1$, and $C_2$ form a band pass filter because $C_1$ blocks low frequencies (no current passes through $C_1$ to create a voltage across $R_2$ and $C_2$) and $C_2$ shorts the band pass filter's output (the negative terminal of \vout) to ground, but midrange frequencies are passed to the output.
-The overall circuit acts as a band reject filter because at low and high frequencies the negative terminal of \vout is grounded so that \[\vout = \frac{R_{3}}{R_{2}+R_{3}}v_{i}\]
+The overall circuit acts as a band reject filter because at low and high frequencies the negative terminal of \vout is grounded so that \[\vout = \frac{R_3}{R_2 + R_3}\vin\]
 At middle frequencies \vin is passed to the negative terminal of \vout so that the terminals of \vout are equal and $\vout = 0$.
 
 This circuit suffers from a low $Q$ \autocite[323]{op-amps-for-everyone}, just as the passive Twin-T band reject filter (the two have similar values of $Q$).
@@ -512,7 +515,7 @@ The transfer function \autocite[323]{op-amps-for-everyone} can be written as
 
 \textcolor{red}{
 \begin{equation}
-\frac{\vout}{\vin}(s) = \frac{\frac{R_6 R_7}{R_5(R_6 + R_7)}(s^2 + 1)}{s^2 +\frac{3R_7}{R_6 + R_7}s+1}
+\frac{\vout}{\vin}(s) = \Hs = \frac{\frac{R_6 R_7}{R_5(R_6 + R_7)}(s^2 + 1)}{s^2 +\frac{3R_7}{R_6 + R_7}s+1}
 \label{eq:activeWienRobinsonbandreject}
 \end{equation}
 }
@@ -552,7 +555,7 @@ This band reject filter's transfer function can be written in the form
 
 \textcolor{red}{
 \begin{equation}
-\frac{\vout}{\vin}(s) = \frac{s^2 + \omega_{o}^2}{s^2 + \frac{\omega_{o}}{Q}s + \omega_{o}^2}
+\frac{\vout}{\vin}(s) = \frac{s^2 + \wcutoff^2}{s^2 + \frac{\wcutoff}{Q}s + \wcutoff^2}
 \label{eq:vcvs_bandreject}
 \end{equation}
 }
@@ -560,10 +563,10 @@ This band reject filter's transfer function can be written in the form
 The op amp is configured as a voltage follower and, since it is the only active device in the circuit, the overall gain of this filter can never exceed unity even in the pass band.
 To achieve the desired transfer function the resistors must be chosen as follows \autocite[145-146]{op-amp-circuits-johnson}:
 \begin{equation}
-R_1 = \frac{1}{2Q\omega_{o}C}
+R_1 = \frac{1}{2Q\wcutoff C}
 \end{equation}
 \begin{equation}
-R_2 = \frac{2Q}{\omega_{o}C}
+R_2 = \frac{2Q}{\wcutoff C}
 \end{equation}
 \begin{equation}
 R_3 = \frac{R_1 R_2}{R_1 + R_2}
@@ -577,7 +580,7 @@ A band reject filter's transfer function can also be written in the form
 
 \textcolor{red}{
 \begin{equation}
-\frac{\vout}{\vin}(s) = \frac{\alpha (s^2 + \omega_{o}^2)}{s^2 + \beta \omega_{o}s + \gamma \omega_{o}^2}
+\frac{\vout}{\vin}(s) = \Hs = \frac{\alpha (s^2 + \wcutoff^2)}{s^2 + \beta \wcutoff s + \gamma \wcutoff^2}
 \label{eq:biquad_bandreject}
 \end{equation}
 }
@@ -585,22 +588,22 @@ A band reject filter's transfer function can also be written in the form
 Unlike the \ac{vcvs} band reject filter above, this biquad filter can provide an inverting gain greater than unity (the $\alpha$ term), and it can also achieve a much higher $Q$.
 The resistors relate to the transfer function as \autocite[146-148]{op-amp-circuits-johnson}
 \begin{equation}
-R_1 = \frac{1}{\alpha \beta \omega_{o}C}
+R_1 = \frac{1}{\alpha \beta \wcutoff C}
 \end{equation}
 \begin{equation}
 R_2 = \alpha R_1
 \end{equation}
 \begin{equation}
-R_3 = \frac{1}{\sqrt{\gamma} \omega_{o}C}
+R_3 = \frac{1}{\sqrt{\gamma} \wcutoff C}
 \end{equation}
 \begin{equation}
-R_4 = \frac{1}{\alpha \omega_{o}C}
+R_4 = \frac{1}{\alpha \wcutoff C}
 \end{equation}
 \begin{equation}
-R_5 = \frac{\sqrt{\gamma}}{\alpha \omega_{o}C}
+R_5 = \frac{\sqrt{\gamma}}{\alpha \wcutoff C}
 \end{equation}
 \begin{equation}
-R_6 = \frac{1}{\omega_{o}C}
+R_6 = \frac{1}{\wcutoff C}
 \end{equation}
 
 \section{All pass filters}
@@ -680,7 +683,7 @@ A second order all pass filter has the transfer function
 
 \textcolor{red}{
 \begin{equation}
-\frac{\vout}{\vin}(s) = H(s) = \frac{K(s^2 - a\omega_{o}s + b\omega_{o}^2)}{s^2 + a\omega_{o}s + b\omega_{o}^2}
+\frac{\vout}{\vin}(s) = H(s) = \frac{K(s^2 - a\wcutoff s + b\wcutoff^2)}{s^2 + a\wcutoff s + b\wcutoff^2}
 \label{eq:2ndorder_allpass}
 \end{equation}
 }
@@ -688,14 +691,14 @@ A second order all pass filter has the transfer function
 since this transfer function has two poles and
 
 \begin{equation}
-\abs{H(\jmath\omega)} = K\frac{\sqrt{(b\omega_{o}^2-\omega^2) + (-a\omega_{o}\omega)^2}}{\sqrt{(b\omega_{o}^2-\omega^2) + (a\omega_{o}\omega)^2}} = K
+\abs{H(\jmath\omega)} = K\frac{\sqrt{(b\wcutoff^2-\omega^2) + (-a\wcutoff\omega)^2}}{\sqrt{(b\wcutoff^2-\omega^2) + (a\wcutoff\omega)^2}} = K
 \end{equation}
 
 The phase is
 
 \textcolor{red}{
 \begin{equation}
-\angle H(\jmath\omega) = \tan^{-1}\left(-\frac{b\omega_{o}^2-\omega^2}{a\omega_{o}\omega}\right) - \tan^{-1}\left(\frac{b\omega_{o}^2-\omega^2}{a\omega_{o}\omega}\right) = -2\tan^{-1}\left(\frac{b\omega_{o}^2-\omega^2}{a\omega_{o}\omega}\right)
+\angle H(\jmath\omega) = \tan^{-1}\left(-\frac{b\wcutoff^2-\omega^2}{a\wcutoff\omega}\right) - \tan^{-1}\left(\frac{b\wcutoff^2-\omega^2}{a\wcutoff\omega}\right) = -2\tan^{-1}\left(\frac{b\wcutoff^2-\omega^2}{a\wcutoff\omega}\right)
 \label{eq:2ndorder_allpass_angle}
 \end{equation}
 }
