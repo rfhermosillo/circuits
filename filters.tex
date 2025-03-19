@@ -1,34 +1,78 @@
 \chapter{Filters}
-This chapter presents a variety of filters (low pass, high pass, band pass, and band reject) using either passive or active components.
+This chapter presents a variety of filters using either passive or active components.
 First and second order filters are presented so that an $n$th-order filter can be constructed by cascading these first and/or second order filters.
 
 Some of these filters can be designed either as Butterworth or Chebyshev filters.
 Butterworth filters are characterized by their maximally flat magnitude in the pass band for all-pole filters (so that, for all-pole filters, they are the best approximation to an ideal filter in the pass band).
 Unfortunately, the magnitude of a Butterworth filter poorly approximates an ideal filter near the cutoff frequency in that the magnitude does not drop particularly sharply from the pass band to the stop band.
-Higher order Butterworth filters transition more sharply and thus better approximate an ideal filter, but they are still inferior to filters like the Chebyshev filter.
+Higher order Butterworth filters transition more sharply and thus better approximate an ideal filter, but they are still inferior at the cutoff frequency to filters like the Chebyshev filter.
 Chebyshev filters' magnitude response best approximates an ideal filter for all-pole filters in that the magnitude drops very sharply from the pass band to the stop band, but their frequency response has ripples in the pass band (i.e. the magnitude oscillates in the pass band, particularly near the cutoff frequency).
 Higher order Chebyshev filters transition even more sharply than lower order Chebyshev filters.
 Thus, Butterworth and Chebyshev filters solve different problems -- the former approximates an ideal filter best in the pass band while the latter is a better approximation near the cutoff frequency. \autocite[107, 111]{op-amp-circuits-johnson}
 % figure out where to put the tables for the coefficients
 
-\section{Low pass filters}
+Filter transfer functions are given as a function of the complex frequency-domain variable
 
-The canonical form of a first-order low pass filter is
-
+\textcolor{red}{
 \begin{equation}
-	H(s) = K\frac{1}{1 + \tau s}
+	s = \sigma + \jmath\omega
+\end{equation}
+}
+
+where the angular frequency \(\omega\) in \si{\radian/\second} is related to the frequency \(f\) in \si{\Hz} as
+
+\textcolor{red}{
+\begin{equation}
+	f = \frac{1}{2\pi\omega}
+	\label{eq:omega_to_f}
+\end{equation}
+}
+
+The filter transfer function, typically denoted \Hs, can be expressed as a rational function of polynomials with real coefficients:
+
+\textcolor{red}{
+\begin{equation}
+	\Hs = \Hpass\frac{\sum\limits_{i=0}^{m} a_i s^i}{\sum\limits_{i=0}^n b_i s^i}
+	\label{eq:general_filter_TF}
+\end{equation}
+}
+
+where \Hpass is the passband gain \autocite[8.5]{basic-linear-design-adi}.
+The degree of the denominator determines the order of the filter, and a higher order is required to achieve a sharper cutoff from passband to stopband.
+
+A passive filter (which uses no active components) is limited to \(\abs{\Hpass} \leq 1\).
+Additionally, passive filter sections often require (active) buffer(s) at their input and/or output to isolate them from a high source impedance and/or low load impedance, respectively.
+Furthermore, higher order filters are often constructed by cascading multiple lower order filters -- and buffers will likely need to be inserted between lower order filters if they are passive.
+The result is that all but the simplest filters require active component(s).
+Analyses of passive filters in this chapter assume low source and high load impedances.
+
+The general form of a first-order \ac{lpf} is
+
+\textcolor{red}{
+\begin{equation}
+	\Hs = \Hpass\frac{1}{1 + \wcutoff s}
 	\label{eq:1storderLPF}
 \end{equation}
+}
 
-where \(K\) is its \DC gain.
-Its cutoff frequency is
+where \wcutoff is the angular cutoff frequency.
+Similarly, the general form of a first-order \ac{hpf} is
 
+\textcolor{red}{
 \begin{equation}
-	\fcutoff = \frac{1}{2\pi\tau}
-	\label{eq:1storderLPFtimeconstant}
+	\Hs = \Hpass\frac{\wcutoff s}{1 + \wcutoff s}
+	\label{eq:1storderHPF}
 \end{equation}
+}
 
-\subsection{RC passive low pass filter}
+% TODO add the second order general equations from page 8.13.
+% TODO modify the 2nd order circuits below to follow the symbols used in these general equations.
+% TODO add Q, the quality factor from page 8.7: If Q is > 0.707, there will be some peaking in the filter response. If the Q is < 0.707, rolloff at F0 will be greater; it will have a more gentle slope and will begin sooner
+
+Since \s is proportional to frequency, we can determine a filter's low frequency response by evaluating its \Hs as \(s \to 0\) and its high frequency response by evaluating its \Hs as \(s \to \infty\).
+
+\section{First-order low and high pass filters}
+\subsection{First-order \(RC\) passive \acl{lpf}}
 \begin{center}
 	\begin{circuitikz}
 		\draw (0,0) node[above]{\vin} to[R=$R$, o-*] ++(2,0) coordinate(join)
@@ -43,20 +87,39 @@ Rearranging, this is
 
 \textcolor{red}{
 \begin{equation}
-	\frac{\vout}{\vin}(s) = \frac{1}{1 + sRC}
+	\frac{\vout}{\vin}(s) = \Hs = \frac{1}{1 + sRC}
 	\label{eq:rcLPF}
 \end{equation}
 }
 
+By inspection its cutoff frequency is \(\wcutoff = R C\).
+
+% TODO: explain the problem with loading from the source and/or load
+
+\subsection{First-order \(RC\) passive \acl{hpf}}
+\begin{center}
+	\begin{circuitikz}
+		\draw (0,0) node[above]{\vin} to[C=$C$, o-*] ++(2,0) coordinate(join)
+		to[R=$R$] ++(0,-2) node[ground]{}
+		(join) to[short, *-o] ++(1,0) node[above]{\vout};
+	\end{circuitikz}
+\end{center}
+
+Compared to the \ac{lpf}, the resistor and capacitor have been switched so the impedance divider is
+\[\vout = \frac{R}{R+\frac{1}{sC}}\vin\]
+Rearranged, this is
+
 \textcolor{red}{
 \begin{equation}
-	\fcutoff = \frac{1}{2\pi R C}
+	\frac{\vout}{\vin}(s) = \Hs = \frac{sRC}{1 + sRC}
+	\label{eq:rcHPF}
 \end{equation}
 }
 
-For low frequencies ($s \to 0$) $\vout/\vin \approx 1$ (all the voltage falls across the capacitor) and for high frequencies ($s \to \infty$) $\vout/\vin \approx 0$ (the capacitor has very low impedance so \vout is shorted to \gnd).
+By inspection its cutoff frequency is \(\wcutoff = R C\).
 
-\subsection{First-order active low pass filter}
+% TODO: rename these to non-inverting, and add the inverting first-order filters from page 8.88 of the ADI filters chapter
+\subsection{First-order active \acl{lpf}}
 \begin{center}
 	\begin{circuitikz}
 		\draw (0,0) node[above]{\vin} to[R=$R_1$, o-*] ++(2,0) coordinate(in)
@@ -82,14 +145,42 @@ The transfer function is thus
 As usual, the resistors should be chosen such that \(R_1 = R_2 \parallel R_3\) to minimize the error due to the op amp's input bias currents.
 
 In this circuit \R[1] and \C perform the same filtering function as the passive \(RC\) filter so the op amp isn't strictly necessary -- however, the op amp provides gain for the filter and can provide isolation of the \(RC\) filter from other circuit elements which might affect its performance.
-If gain is not needed, the op amp can be configured as a voltage buffer by removing $R_2$ and replacing $R_3$ with a short.
+If gain is not needed, the op amp can be configured as a voltage buffer by removing \R[2] and replacing \R[3] with a short.
 
-% TODO: move this to the intro section
-This is clearly a low pass filter since $\vout/\vin \approx 1 + R_3/R_2$ for low frequencies where $sR_1 C \ll 1$ (notice the circuit behaves like an op amp non-inverting amplifier here) and $\vout/\vin \approx 0$ for high frequencies where $sR_{1}C \gg 1$.
-In the limiting cases where $R_2 \to \infty$ and $R_3 \to 0$ the op amp is configured like a voltage buffer with an RC low pass filter at its input -- $R_2$ and $R_3$ simply provide gain in addition to the filtering operation.
-If $R_2$ and $R_3$ are used, the three resistors should be chosen such that the filter formed by $R_1$ and $C$ has the desired \SI{-3}{dB} frequency and $R_1 = R_2 \parallel R_3$ (the latter relationship minimizes the error due to the op amp's input bias currents).
+% TODO: account for nonzero Rs? Then it should be Rs + R1 = R2 || R3
+If \R[2] and \R[3] are used, the three resistors should be chosen such that the filter formed by \R[1] and \C has the desired cutoff frequency and \(R_1 = R_2 \parallel R_3\) (the latter relationship minimizes the error due to the op amp's input bias currents).
 
-\subsection{Second-order \ac{vcvs} active low pass filter}
+\subsection{First-order active \acl{hpf}}
+\label{sec:active1storderHPF}
+\begin{center}
+	\begin{circuitikz}
+		\draw (0,0) node[above]{\vin} to[C=$C$, o-*] ++(2,0) coordinate(in)
+		to[R=$R_1$] ++(0,-2) node[ground]{}
+		(in) to[short] ++(2,0) node[op amp, noinv input up, anchor=+](OA){}
+		(OA.out) to[R=$R_3$] ++(0,-2) coordinate(FB)
+		to[R=$R_2$] ++(0,-2) node[ground]{}
+		(OA.out) to[short, *-o] ++(1,0) node[above]{\vout}
+		(OA.-) -- (FB -| OA.-) to[short, -*] (FB);
+	\end{circuitikz}
+\end{center}
+
+This circuit is simply a cascade of the \(RC\) passive \ac{hpf} and the non-inverting amplifier.
+The transfer function is thus
+
+\textcolor{red}{
+	\begin{equation}\frac{\vout}{\vin}(s) = \left(1 + \frac{R_3}{R_2}\right)\left(\frac{sR_1 C}{1 + sR_1 C}\right)
+	\label{eq:active1storderHPF}
+\end{equation}
+}
+
+As usual, the resistors should be chosen such that \(R_1 = R_2 \parallel R_3\) to minimize the error due to the op amp's input bias currents.
+
+In this circuit \R[1] and \C perform the same filtering function as the passive \(RC\) filter so the op amp isn't strictly necessary -- however, the op amp provides gain for the filter and can provide isolation of the \(RC\) filter from other circuit elements which might affect its performance.
+If gain is not needed, the op amp can be configured as a voltage buffer by removing \R[2] and replacing \R[3] with a short.
+
+\section{Second-order low and high pass filters}
+% TODO: rename the VCVS filters to Sallen-Key (see ADI filters p. 8.72)
+\subsection{Second-order \acs{vcvs} active \acl{lpf}}
 \begin{center}
 	\includegraphics{schematics/2ndorder_vcvs_LPfilter.PNG}
 \end{center}
@@ -138,10 +229,40 @@ R_3 = \frac{K(R_1 + R_2)}{K-1}, K > 1
 R_4 = K(R_1 + R_2)
 \end{equation}
 
-The parameters $a$ and $b$ depend on the type of filter desired -- Butterworth or Chebyshev. See Appendix A for tables of these parameter values.
+The parameters $a$ and $b$ depend on the type of filter desired -- Butterworth or Chebyshev.
+Check Butterworth and Chebyshev coefficient tables for these parameter values.
 % add appendix for the Butterworth and Chebyshev a and b coefficient parameters
 
-\subsection{Second-order biquad low pass filter}
+\subsection{Second-order \acs{vcvs} \acl{hpf}}
+\begin{center}
+	\includegraphics{schematics/2ndorder_vcvs_HPfilter.PNG}
+\end{center}
+The \ac{vcvs} second-order high pass filter is the same as the \ac{vcvs} second-order low pass filter but with the resistors replaced with capacitors and the capacitors replaced by resistors (except for the resister divider). Using the  general transfer function for a second-order high pass filter
+
+\textcolor{red}{
+\begin{equation}
+\frac{v_{o}}{v_{i}}(s) = \frac{Ks^{2}}{s^{2} + \frac{a}{b}\omega_{c}s + \frac{\omega_{c}^{2}}{b}}
+\label{eq:2ndorder_vcvs_HPfilter}
+\end{equation}
+}
+
+the resistors determine the transfer function as follows \autocite[130-131]{op-amp-circuits-johnson}:
+\begin{equation}
+R_1 = \frac{4b}{(a+\sqrt{a^2 + 8b(K-1)})\omega_{c}C}
+\end{equation}
+\begin{equation}
+R_2 = \frac{b}{\omega_{c}^2 C^2 R_1}
+\end{equation}
+\begin{equation}
+R_3 = \frac{KR_1}{K-1}, K > 1
+\end{equation}
+\begin{equation}
+R_4 = KR_1
+\end{equation}
+
+If no gain is needed (i.e. $K = 1$) $R_3$ can be removed and $R_4$ replaced with a short.
+
+\subsection{Second-order biquad \acl{lpf}}
 \begin{center}
 	\includegraphics{schematics/2ndorderbiquadLPfilter.PNG}
 \end{center}
@@ -178,112 +299,7 @@ In particular, the desired $\omega_{c}$ determines the values of $C$ and $R_4$, 
 The \ac{vcvs} filters require two different capacitor values and the resistors affect one or more values of $a$, $b$, and $K$ in nontrivial ways.
 The biquad circuit's offer of simpler tuning may be worth the two additional op amps. \autocite[120-122]{op-amp-circuits-johnson}
 
-\section{High pass filters}
-
-The canonical form of a first-order high pass filter is
-
-\begin{equation}
-	H(s) = K\frac{\tau s}{1 + \tau s}
-	\label{eq:1storderHPF}
-\end{equation}
-
-where \(K\) is its \DC gain.
-Its cutoff frequency is
-
-\begin{equation}
-	\fcutoff = \frac{1}{2\pi\tau}
-	\label{eq:1storderHPFtimeconstant}
-\end{equation}
-
-\subsection{RC passive high pass filter}
-\begin{center}
-	\begin{circuitikz}
-		\draw (0,0) node[above]{\vin} to[C=$C$, o-*] ++(2,0) coordinate(join)
-		to[R=$R$] ++(0,-2) node[ground]{}
-		(join) to[short, *-o] ++(1,0) node[above]{\vout};
-	\end{circuitikz}
-\end{center}
-Compared to the low pass filter, the resistor and capacitor have been switched so the impedance divider is
-\[\vout = \frac{R}{R+\frac{1}{sC}}\vin\]
-Rearranged, this is
-
-\textcolor{red}{
-\begin{equation}
-	\frac{\vout}{\vin}(s) = \frac{sRC}{1 + sRC}
-	\label{eq:rcHPF}
-\end{equation}
-}
-
-By inspection its cutoff frequency is
-
-\textcolor{red}{
-\begin{equation}
-	\fcutoff = \frac{1}{2\pi R C}
-	\label{eq:rcHPFcutoff}
-\end{equation}
-}
-
-\subsection{First-order active high pass filter}
-\label{sec:active1storderHPF}
-\begin{center}
-	\begin{circuitikz}
-		\draw (0,0) node[above]{\vin} to[C=$C$, o-*] ++(2,0) coordinate(in)
-		to[R=$R_1$] ++(0,-2) node[ground]{}
-		(in) to[short] ++(2,0) node[op amp, noinv input up, anchor=+](OA){}
-		(OA.out) to[R=$R_3$] ++(0,-2) coordinate(FB)
-		to[R=$R_2$] ++(0,-2) node[ground]{}
-		(OA.out) to[short, *-o] ++(1,0) node[above]{\vout}
-		(OA.-) -- (FB -| OA.-) to[short, -*] (FB);
-	\end{circuitikz}
-\end{center}
-
-This circuit is simply a cascade of the \(RC\) passive \ac{hpf} and the non-inverting amplifier.
-The transfer function is thus
-
-\textcolor{red}{
-	\begin{equation}\frac{\vout}{\vin}(s) = \left(1 + \frac{R_3}{R_2}\right)\left(\frac{sR_1 C}{1 + sR_1 C}\right)
-	\label{eq:active1storderHPF}
-\end{equation}
-}
-
-As usual, the resistors should be chosen such that \(R_1 = R_2 \parallel R_3\) to minimize the error due to the op amp's input bias currents.
-
-In this circuit \R[1] and \C perform the same filtering function as the passive \(RC\) filter so the op amp isn't strictly necessary -- however, the op amp provides gain for the filter and can provide isolation of the \(RC\) filter from other circuit elements which might affect its performance.
-If gain is not needed, the op amp can be configured as a voltage buffer by removing $R_2$ and replacing $R_3$ with a short.
-
-% TODO: move this to the intro section
-For low frequencies ($s \to 0$) $\vout/\vin \approx 0$ and for high frequencies ($s \to \infty$) $\vout/\vin \approx 1 + R_3/R_2$ so the circuit behaves as a high pass filter.
-
-\subsection{Second-order \ac{vcvs} high pass filter}
-\begin{center}
-	\includegraphics{schematics/2ndorder_vcvs_HPfilter.PNG}
-\end{center}
-The \ac{vcvs} second-order high pass filter is the same as the \ac{vcvs} second-order low pass filter but with the resistors replaced with capacitors and the capacitors replaced by resistors (except for the resister divider). Using the  general transfer function for a second-order high pass filter
-
-\textcolor{red}{
-\begin{equation}
-\frac{v_{o}}{v_{i}}(s) = \frac{Ks^{2}}{s^{2} + \frac{a}{b}\omega_{c}s + \frac{\omega_{c}^{2}}{b}}
-\label{eq:2ndorder_vcvs_HPfilter}
-\end{equation}
-}
-
-the resistors determine the transfer function as follows \autocite[130-131]{op-amp-circuits-johnson}:
-\begin{equation}
-R_1 = \frac{4b}{(a+\sqrt{a^2 + 8b(K-1)})\omega_{c}C}
-\end{equation}
-\begin{equation}
-R_2 = \frac{b}{\omega_{c}^2 C^2 R_1}
-\end{equation}
-\begin{equation}
-R_3 = \frac{KR_1}{K-1}, K > 1
-\end{equation}
-\begin{equation}
-R_4 = KR_1
-\end{equation}
-
-If no gain is needed (i.e. $K = 1$) $R_3$ can be removed and $R_4$ replaced with a short.
-
-\subsection{Second-order biquad high pass filter}
+\subsection{Second-order biquad \acl{hpf}}
 \begin{center}
 	\includegraphics{schematics/2ndorderbiquadHPfilter.PNG}
 \end{center}
@@ -296,7 +312,8 @@ This circuit is a biquad filter that implements the general second-order high pa
 \end{equation}
 }
 
-with an inverting gain (i.e. $K < 0$). The resistors relate to the transfer function as follows \autocite[131]{op-amp-circuits-johnson}:
+with an inverting gain (i.e. $K < 0$).
+The resistors relate to the transfer function as follows \autocite[131]{op-amp-circuits-johnson}:
 \begin{equation}
 R_1 = \frac{b}{aK\omega_{c}C}
 \end{equation}
@@ -315,7 +332,7 @@ R_5 = \frac{1}{\omega_{c}C}
 
 \section{Band pass filters}
 
-\subsection{\ac{vcvs} band pass filter}
+\subsection{\acs{vcvs} band pass filter}
 \begin{center}
 	\includegraphics{schematics/vcvs_bandpass.PNG}
 \end{center}
@@ -328,7 +345,8 @@ The general equation for the transfer function of this filter is
 \end{equation}
 }
 
-Since this is a band pass filter $\frac{v_{o}}{v_{i}} \approx 0$ as $s \rightarrow 0$ and $s \rightarrow \infty$ but the gain is nonzero in the midband. The resistors are related to the transfer function as follows \autocite[138-139]{op-amp-circuits-johnson}:
+Since this is a band pass filter $\vout/\vin \approx 0$ as $s \to 0$ and $s \to \infty$ but the gain is nonzero in the midband.
+The resistors are related to the transfer function as follows \autocite[138-139]{op-amp-circuits-johnson}:
 \begin{equation}
 R_1 = \frac{2}{\alpha \omega_{o}C}
 \end{equation}
@@ -418,29 +436,6 @@ Q = \frac{1}{4}
 
 An active Twin-T band reject filter (which uses the Twin-T topology in the feedback path of an operational amplifier) improves $Q$. \autocite[321]{op-amps-for-everyone}
 
-\subsection{Passive Wien-Robinson band reject filter}
-\begin{center}
-	\includegraphics{schematics/passiveWien-Robinsonbandrejectfilter.PNG}
-\end{center}
-The Wien-Robinson band reject filter takes a single-ended input and produces a differential output.
-It can be analyzed intuitively by realizing that it is composed of a voltage divider ($R_3$ and $R_4$) in parallel with a band pass filter.
-$R_1$, $R_2$, $C_1$, and $C_2$ form a band pass filter because $C_1$ blocks low frequencies (no current passes through $C_1$ to create a voltage across $R_2$ and $C_2$) and $C_2$ shorts the band pass filter's output (the negative terminal of \vout) to ground, but midrange frequencies are passed to the output.
-The overall circuit acts as a band reject filter because at low and high frequencies the negative terminal of \vout is grounded so that \[\vout = \frac{R_{3}}{R_{2}+R_{3}}v_{i}\]
-At middle frequencies \vin is passed to the negative terminal of \vout so that the terminals of \vout are equal and $\vout = 0$.
-
-This circuit suffers from a low $Q$ \autocite[323]{op-amps-for-everyone}, just as the passive Twin-T band reject filter (the two have similar values of $Q$).
-It too can be improved with the use of operational amplifiers.
-
-Typically the component values are chosen such that $R_1 = R_2$ and $C_1 = C_2$.
-In that case the notch frequency \autocite[324]{op-amps-for-everyone} is
-
-\textcolor{red}{
-\begin{equation}
-f = \frac{1}{2\pi R_{1}C_{1}}
-\label{eq:passiveWienRobinson}
-\end{equation}
-}
-
 \subsection{Active Twin-T band reject filter}
 \begin{center}
 	\includegraphics{schematics/activeTwinTbandrejectfilter.PNG}
@@ -478,7 +473,30 @@ With $K$ and $Q$ given in terms of the circuit components, the overall transfer 
 
 \textcolor{red}{
 \begin{equation}
-\frac{v_{o}}{v_{i}}(s) = \frac{K(s^{2}+1)}{s^{2}+\frac{s}{Q}+1} =  \frac{\frac{R_{3}+R_{4}}{R_{3}}(s^{2}+1)}{s^{2}+\frac{2(R_{3}-R_{4})}{R_{3}}s+1}
+\frac{\vout}{\vin}(s) = \frac{K(s^2 + 1)}{s^2 + \frac{s}{Q} + 1} = \frac{\frac{R_3 + R_4}{R_3}(s^2 + 1)}{s^2 + \frac{2(R_3 - R_4)}{R_3}s+1}
+\end{equation}
+}
+
+\subsection{Passive Wien-Robinson band reject filter}
+\begin{center}
+	\includegraphics{schematics/passiveWien-Robinsonbandrejectfilter.PNG}
+\end{center}
+The Wien-Robinson band reject filter takes a single-ended input and produces a differential output.
+It can be analyzed intuitively by realizing that it is composed of a voltage divider ($R_3$ and $R_4$) in parallel with a band pass filter.
+$R_1$, $R_2$, $C_1$, and $C_2$ form a band pass filter because $C_1$ blocks low frequencies (no current passes through $C_1$ to create a voltage across $R_2$ and $C_2$) and $C_2$ shorts the band pass filter's output (the negative terminal of \vout) to ground, but midrange frequencies are passed to the output.
+The overall circuit acts as a band reject filter because at low and high frequencies the negative terminal of \vout is grounded so that \[\vout = \frac{R_{3}}{R_{2}+R_{3}}v_{i}\]
+At middle frequencies \vin is passed to the negative terminal of \vout so that the terminals of \vout are equal and $\vout = 0$.
+
+This circuit suffers from a low $Q$ \autocite[323]{op-amps-for-everyone}, just as the passive Twin-T band reject filter (the two have similar values of $Q$).
+It too can be improved with the use of operational amplifiers.
+
+Typically the component values are chosen such that $R_1 = R_2$ and $C_1 = C_2$.
+In that case the notch frequency \autocite[324]{op-amps-for-everyone} is
+
+\textcolor{red}{
+\begin{equation}
+f = \frac{1}{2\pi R_1 C_1}
+\label{eq:passiveWienRobinson}
 \end{equation}
 }
 
@@ -494,7 +512,7 @@ The transfer function \autocite[323]{op-amps-for-everyone} can be written as
 
 \textcolor{red}{
 \begin{equation}
-\frac{v_{o}}{v_{i}}(s) = \frac{\frac{R_{6}R_{7}}{R_{5}(R_{6}+R_{7})}(s^{2}+1)}{s^{2}+\frac{3R_{7}}{R_{6}+R_{7}}s+1}
+\frac{\vout}{\vin}(s) = \frac{\frac{R_6 R_7}{R_5(R_6 + R_7)}(s^2 + 1)}{s^2 +\frac{3R_7}{R_6 + R_7}s+1}
 \label{eq:activeWienRobinsonbandreject}
 \end{equation}
 }
@@ -559,7 +577,7 @@ A band reject filter's transfer function can also be written in the form
 
 \textcolor{red}{
 \begin{equation}
-\frac{v_{o}}{v_{i}}(s) = \frac{\alpha (s^{2} + \omega_{o}^{2})}{s^{2} + \beta \omega_{o}s + \gamma \omega_{o}^{2}}
+\frac{\vout}{\vin}(s) = \frac{\alpha (s^2 + \omega_{o}^2)}{s^2 + \beta \omega_{o}s + \gamma \omega_{o}^2}
 \label{eq:biquad_bandreject}
 \end{equation}
 }
@@ -590,6 +608,7 @@ R_6 = \frac{1}{\omega_{o}C}
 \begin{center}
 	\includegraphics{schematics/1storderallpassfilter.PNG}
 \end{center}
+% TODO: see https://en.wikipedia.org/wiki/All-pass_filter, which includes a version that swaps the R and C at the non-inverting input and passive versions
 This circuit \autocite[328]{op-amps-for-everyone} has a gain of 1 at low frequencies and -1 at high frequencies.
 At low frequencies, neither the capacitor nor the non-inverting input of the operational amplifier draw any current, so there is no voltage drop across $R_2$ and the non-inverting input has a voltage equal to \vin.
 The inverting input also has a voltage equal to \vin since the operational amplifier's inputs must be at (approximately) equal voltage, so there is no voltage drop across the $R_1$ connected to \vin.
@@ -601,41 +620,42 @@ It is not intuitively obvious, however, that the circuit has a gain of magnitude
 Let the voltage at the operational amplifier's inputs be $v_x$.
 $R_2$ and $C_1$ act as a voltage divider for \vin at the operational amplifier's inverting input, so
 
-\begin{equation}v_x = \frac{\frac{1}{sC_1}}{R_2 + \frac{1}{sC_1}}\vin = \frac{\vin}{1+sR_2 C_1}
+\begin{equation}
+	v_x = \frac{\frac{1}{sC_1}}{R_2 + \frac{1}{sC_1}}\vin = \frac{\vin}{1+s R_2 C_1}
 \end{equation}
 
 The operational amplifier's non-inverting input is also at voltage $v_x$ (ideally), so use \ac{kcl} at the non-inverting input node:
 
 \begin{equation}
-\frac{\vout-v_x}{R_1} = \frac{v_x - \vin}{R_1}
+\frac{\vout - v_x}{R_1} = \frac{v_x - \vin}{R_1}
 \end{equation}
 
-Substituting for $v_{x}$, we have
+Substituting for $v_x$, we have
 
 \begin{equation}
-\frac{\vout}{R_1}-\frac{\vin}{R_1(1+sR_2 C_1)} = \frac{\vin}{R_1(1+sR_2 C_1)}-\frac{\vin}{R_1}
+\frac{\vout}{R_1}-\frac{\vin}{R_1(1+s R_2 C_1)} = \frac{\vin}{R_1(1+s R_2 C_1)}-\frac{\vin}{R_1}
 \end{equation}
 
 Rearranging, we have
 
 \begin{equation}
-\vout = \vin\left(\frac{2}{1+sR_2 C_1}-1\right)
+\vout = \vin\left(\frac{2}{1+s R_2 C_1}-1\right)
 \end{equation}
 
 Rearranging further, the transfer function is thus
 
 \textcolor{red}{
 \begin{equation}
-\frac{\vout}{\vin}(s) = \frac{1-sR_2 C_1}{1+sR_2 C_1}
+\frac{\vout}{\vin}(s) = \frac{1 - s R_2 C_1}{1 + s R_2 C_1}
 \label{eq:1storderallpassfilter}
 \end{equation}
 }
 
 The transfer function reveals a zero at $s = 1/(R_2 C_1)$ and a pole at $s = -1/(R_2 C_1)$ (technically, the operational amplifier introduces its own poles to the system so that the gain does actually go to zero at very high frequencies, but we are assuming that the frequencies of operation are well below the operational amplifier's poles).
-In any case, the gain has constant magnitude $|H(s)| = |H(\jmath\omega)|$ across the (operational) frequency spectrum since
+In any case, the gain has constant magnitude $\abs{H(s)} = \abs{H(\jmath\omega)}$ across the (operational) frequency spectrum since
 
 \begin{equation}
-|H(\jmath\omega)| = \frac{\sqrt{1+(-\omega R_2 C_1)^2}}{\sqrt{1+(\omega R_2 C_1)^2}} = 1
+\abs{H(\jmath\omega)}= \frac{\sqrt{1+(-\omega R_2 C_1)^2}}{\sqrt{1+(\omega R_2 C_1)^2}} = 1
 \end{equation}
 
 so the circuit is an all pass filter.
@@ -668,7 +688,7 @@ A second order all pass filter has the transfer function
 since this transfer function has two poles and
 
 \begin{equation}
-|H(\jmath\omega)| = K\frac{\sqrt{(b\omega_{o}^2-\omega^2) + (-a\omega_{o}\omega)^2}}{\sqrt{(b\omega_{o}^2-\omega^2) + (a\omega_{o}\omega)^2}} = K
+\abs{H(\jmath\omega)} = K\frac{\sqrt{(b\omega_{o}^2-\omega^2) + (-a\omega_{o}\omega)^2}}{\sqrt{(b\omega_{o}^2-\omega^2) + (a\omega_{o}\omega)^2}} = K
 \end{equation}
 
 The phase is

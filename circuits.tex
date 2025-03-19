@@ -29,12 +29,14 @@
     ]{biblatex}
 \addbibresource{references.bib}
 
+\NewDocumentCommand\abs{m}{\ensuremath{\left|#1\right|}\xspace}
 \NewDocumentCommand\sub{m}{\ensuremath{_\mathrm{#1}}\xspace}
 
 \NewDocumentCommand\gnd{}{GND\xspace}
 \NewDocumentCommand\R{o}{\ensuremath{R\IfValueT{#1}{_#1}}\xspace}
 \NewDocumentCommand\C{o}{\ensuremath{C\IfValueT{#1}{_#1}}\xspace}
 
+% TODO: what subscript to use for input? 'i' or 's'? GHLM uses 'i' except where the source resistance Rs is important (to distinguish it from the circuit input resistance Ri).
 \NewDocumentCommand\vin{o}{\ensuremath{v_{i\IfValueT{#1}{#1}}}\xspace}
 \NewDocumentCommand\rin{}{\ensuremath{R_i}\xspace}
 \NewDocumentCommand\vout{o}{\ensuremath{v_{o}\IfValueT{#1}{#1}}\xspace}
@@ -42,7 +44,11 @@
 \NewDocumentCommand\rpi{o}{\ensuremath{r_{\pi\IfValueT{#1}{#1}}}\xspace}
 % TODO: add Vth, Vbe, \gnd, \npn, \pnp, RL, \VT and \VTH (MOSFET threshold voltage), \BF (and what other betas?), \VGS, \VDS, \VCC, \VEE, \VDD, \VSS, \Vov for MOSFET overdrive
 
+\NewDocumentCommand\s{}{\ensuremath{s}\xspace}
+\NewDocumentCommand\Hs{}{\ensuremath{H(s)}\xspace}
+\NewDocumentCommand\Hpass{}{\ensuremath{H_0}\xspace}
 \NewDocumentCommand\fcutoff{}{\ensuremath{f\sub{c}}\xspace}
+\NewDocumentCommand\wcutoff{}{\ensuremath{\omega\sub{c}}\xspace}
 
 % Use uppercase for the command names since \ac is already defined
 \NewDocumentCommand\AC{}{\ac{ac}\xspace}

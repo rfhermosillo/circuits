@@ -78,7 +78,7 @@ $C_1$ is an optional capacitor used with non-zero $R_3$ to reduce high frequency
 $R_3$ is only needed to produce a \DC offset and has no effect on the signal's transfer function, but it produces white thermal noise that can be attenuated by the low pass filter formed by $R_3$ and $C_1$.
 
 A capacitor \C may be inserted between \vin and \R[1] if the amplifier must be \AC-coupled.
-The op amp's inverting input is at virtual ground so the time constant is \(\tau = R_1 C\) and \(\fcutoff = 1/(2\pi R_1 C)\) as given by \eqref{eq:1storderHPFtimeconstant}.
+The op amp's inverting input is at virtual ground so the time constant is \(\tau = R_1 C\) and \(\fcutoff = 1/(2\pi R_1 C)\).
 
 \section{Non-inverting amplifier}
 \begin{center}
@@ -109,11 +109,11 @@ The very high input impedance and very low output impedance of op amps ensures t
 
 One option if this amplifier must be \AC-coupled is to add a passive \(RC\) filter in series with the input, which produces the first-order active \ac{hpf} shown on page \pageref{sec:active1storderHPF}.
 It is not enough to simply add a series capacitor -- a resistor to \gnd is necessary to provide a \DC path for the op amp's input bias current and to set the filter cutoff frequency.
-Set the resistor \(R = R_1 \parallel R_2\) to minimize the error caused by the op amp's input bias currents, then set the capacitor \C to achieve the desired cutoff frequency \(\fcutoff = 1/(2\pi R C)\) as given in \eqref{eq:rcHPFcutoff}.
+Set the resistor \(R = R_1 \parallel R_2\) to minimize the error caused by the op amp's input bias currents, then set the capacitor \C to achieve the desired cutoff frequency \(\fcutoff = 1/(2\pi R C)\).
 Unfortunately, this option reduces the amplifier's input resistance to \(\rin = R\) in the passband.
 
 Another option, if the signal is \AC but \DC does not need to be blocked, is to insert a capacitor \C between \R[1] and \gnd.
-The capacitor is an open circuit for \DC, which makes denominator in \eqref{eq:noninvertingopampamplifier} very large and the \DC gain approximately 1;
+The capacitor is an open circuit for \DC, which makes the denominator in \eqref{eq:noninvertingopampamplifier} very large and the \DC gain approximately 1;
 in the passband the capacitor is a short circuit so the gain is unaffected.
 The capacitor sees an equivalent resistance to \gnd of \(R_1 + R_2\) so the cutoff frequency is \(\fcutoff = 1/(2\pi(R_1 + R_2)C\).
 
