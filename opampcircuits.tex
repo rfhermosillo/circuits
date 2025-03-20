@@ -28,17 +28,15 @@ Multiple op amp inverting (or non-inverting) amplifiers with lower individual ga
 
 \section{Inverting amplifier}
 \begin{center}
-\begin{circuitikz}
-\draw (0, 0) node[op amp] (opamp) {}
+	\begin{circuitikz}
+		\draw (0, 0) node[op amp] (opamp) {}
 		(opamp.-) to[short,-*] ++(-1,0) coordinate(A)
-		(opamp.+) to[short,-*] ++(-1,0) coordinate(B)
+		(opamp.+) to[short] ++(-1,0) coordinate(B)
 		(B) to[R=$R_3$] ++(0,-2) node[ground](G){}
-		(B) to[short] ++(-1,0) coordinate(B2)
-		(B2) to[C, l_=$C_1$] ++(0,-2) node[ground]{}
 		(opamp.out) to[short,*-o] ++(1,0) coordinate(C)
 		(A) to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-1,0) node[above]{\vin}
 		(A) |- ++(1,1) coordinate[yshift=1ex] (L1) to[R=$R_2$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout};
-\end{circuitikz}
+	\end{circuitikz}
 \end{center}
 The op amp's non-inverting input has ideally no input bias current so no current flows through $R_3$ or $C_1$ and the non-inverting input is at ground potential.
 Due to the op amp's high open loop gain, the inverting input is also ideally at ground potential (this is a ``virtual ground'' condition) so \ac{kcl} relates \vin and \vout through the inverting input node.
@@ -48,8 +46,8 @@ The transfer function is therefore
 
 \textcolor{red}{
 \begin{equation}
-\frac{\vout}{\vin} = -\frac{R_2}{R_1}
-\label{eq:invertingopampamplifier}
+	\frac{\vout}{\vin} = -\frac{R_2}{R_1}
+	\label{eq:inverting_amplifier_TF}
 \end{equation}
 }
 
@@ -74,8 +72,8 @@ R_3 = R_1 \parallel R_2
 
 in order to balance the bias voltages produced by the op amp's input bias currents.
 
-$C_1$ is an optional capacitor used with non-zero $R_3$ to reduce high frequency noise added by $R_3$.
-$R_3$ is only needed to produce a \DC offset and has no effect on the signal's transfer function, but it produces white thermal noise that can be attenuated by the low pass filter formed by $R_3$ and $C_1$.
+An optional capacitor may be placed in parallel with non-zero $R_3$ to reduce high frequency noise added by $R_3$.
+$R_3$ is only needed to produce a \DC offset and has no effect on the signal's transfer function, but it produces white thermal noise that can be attenuated by the \ac{lpf} formed by $R_3$ and the capacitor in parallel.
 
 A capacitor \C may be inserted between \vin and \R[1] if the amplifier must be \AC-coupled.
 The op amp's inverting input is at virtual ground so the time constant is \(\tau = R_1 C\) and \(\fcutoff = 1/(2\pi R_1 C)\).
@@ -229,45 +227,77 @@ For $v_2$,
 \end{equation}
 }
 
+% TODO: move these to the filter chapter since they are effectively filters?
 \section{Differentiator}
+% TODO: Fix the code for CF
 \begin{center}
-	\includegraphics{schematics/differentiator.PNG}
+	\begin{circuitikz}
+		\draw (0, 0) node[op amp] (opamp) {}
+		(opamp.-) to[short,-*] ++(-1,0) coordinate(FB)
+		(opamp.+) to[short] ++(-1,0) coordinate(B)
+		(B) to[R=$R\sub{B}$] ++(0,-2) node[ground](G){}
+		(opamp.out) to[short,*-o] ++(1,0) coordinate(C)
+		(FB) to[C,l_=$C$] ++(-2,0) to[R,l_=$R\sub{A}$] ++(-2,0) to[short,-o] ++(-1,0) node[above]{\vin}
+		(FB) to[short,-*] ++(0,1) coordinate(FL) |- ++(1,0) coordinate[yshift=1ex](L1) to[R=$R$] ++(2,0) coordinate(FR) -| (opamp.out) to[short] coordinate(OUT) ++(1,0) node[above]{\vout}
+		(FL) to[short] ++(0,1.5) coordinate(L2) to[C=$C\sub{F}$] ++(2,0) to[short] ++(1.375,0) to[short,-*] ++(0,-1.475) |- (FR);
+	\end{circuitikz}
 \end{center}
-The differentiator is similar to the inverting op amp amplifier except that there is no resistor in series between the input and the op amp's inverting input -- only a capacitor is used.
-The inverting input's voltage is equal to $v\sub{REF}$, and \ac{kcl} on this node can be used along with a capacitor's I/V relationship: $i\sub{C} = Cdv_C/dt$. The transfer function is thus
 
-\textcolor{red}{
+The differentiator is similar to the inverting op amp amplifier except that the resistor in series between the input and the op amp's inverting input is replaced with a capacitor.
+The ideal differentiator has \(R\sub{A} = C\sub{F} = 0\) (i.e., the resistor is a short circuit and the feedback capacitor is an open circuit), though a practical implementation requires these components.
+For the ideal differentiator, the inverting input's voltage is equal to \gnd (the op amp's input bias current produces a negligible voltage across \(R\sub{B}\)) and the non-inverting input is at a virtual ground.
+The capacitor voltage is thus equal to \(\vin(t)\) and by definition the current through it is \(\iin(t)\), so \[\iin(t) = C\frac{d\vin(t)}{dt}\]
+
+\ac{kcl} on the inverting input node means that \(\iin(t) = -\vout(t)/R\) also, which relates the input to the output:
+
+\[C\frac{d\vin(t)}{dt} = -\frac{\vout(t)}{R}\]
+
+Solving for \(\vout(t)\), we find that it is proportional to the derivative of \(\vin(t)\):
+
 \begin{equation}
-\vout(t) = -RC\frac{d\vin(t)}{dt}
-\label{differentiator}
+	\vout(t) = -RC\frac{d\vin(t)}{dt}
+	\label{eq:ideal_differentiator_time}
 \end{equation}
-}
+
 
 \noindent Another way to represent the transfer function is with complex numbers:
 
+\begin{equation}
+	\frac{\vout}{\vin}(s) = -sRC
+	\label{eq:ideal_differentiator_TF}
+\end{equation}
+
+Unfortunately, the ideal differentiator tends to be unstable and is sensitive to high frequency noise.
+Both of these problems are due to the fact that the gain increases as frequency increases -- the circuit's gain is theoretically infinite at very high frequencies, though a real op amp's bandwidth will limit the high frequency gain.
+To address this a problem a practical differentiator introduces \R[A] and \C[F].
+Substituting the practical differentiator's impedances into \eqref{eq:inverting_amplifier_TF} we have:
+
+\[\frac{\vout}{\vin}(s) = -\frac{R \parallel 1/(s\C[F])}{\R[A] + 1/(s\C)}\]
+
+From this equation it is clear that at high frequencies (\(s \to \infty\), where \C is a short circuit), \R[A] in series with \C prevents the denominator from approaching 0.
+After some algebra we obtain:
+
 \textcolor{red}{
 \begin{equation}
-\frac{\vout}{\vin}(s) = -sRC = -\jmath \omega RC
-\label{eq:differentiator_complex}
+	\frac{\vout}{\vin}(s) = \frac{-sRC}{(1 + s R \C[F])(1 + s\R[A] C)}
+	\label{eq:practical_differentiator_TF}
 \end{equation}
 }
 
-Unfortunately, the differentiator suffers from a high frequency noise problem; the circuit naturally amplifies high frequency signals so the output will oscillate unless all high frequency signals at the input are sufficiently attenuated.
-Since noise typically has high frequency components it can be very difficult to stabilize this circuit.
+% TODO: finish the discussion of the practical differentiator.
+% One way to avoid the unwanted amplification of high frequency signals or noise is to place a resistor in series with the capacitor.
+% This, of course, gives the differentiator the same topology as the op amp inverting amplifier!
+% The difference is that the op amp inverting amplifier uses a much larger AC coupling capacitor to block very low frequency signals whose frequencies are below the range of frequencies the circuit is meant to operate on, while the capacitor in the differentiator is smaller to affect the appropriate range of frequencies.
+% Reusing the analysis of the op amp inverting amplifier but replacing the input resistor with the impedance of the input resistor and capacitor, the transfer function (using the complex $s$) is $\vout(1+R\sub{i}C) = -sRC\vin$. If $R\sub{i}C$ is much less than the period $T$ of the signals the circuit must operate on, however, the equation simplifies to
 
-One way to avoid the unwanted amplification of high frequency signals or noise is to place a resistor in series with the capacitor.
-This, of course, gives the differentiator the same topology as the op amp inverting amplifier!
-The difference is that the op amp inverting amplifier uses a much larger AC coupling capacitor to block very low frequency signals whose frequencies are below the range of frequencies the circuit is meant to operate on, while the capacitor in the differentiator is smaller to affect the appropriate range of frequencies.
-Reusing the analysis of the op amp inverting amplifier but replacing the input resistor with the impedance of the input resistor and capacitor, the transfer function (using the complex $s$) is $\vout(1+R\sub{i}C) = -sRC\vin$. If $R\sub{i}C$ is much less than the period $T$ of the signals the circuit must operate on, however, the equation simplifies to
+% \textcolor{red}{
+% \begin{equation}
+% \frac{\vout}{\vin}(s) \approx -sRC
+% \label{eq:differentiator_series_cap}
+% \end{equation}
+% }
 
-\textcolor{red}{
-\begin{equation}
-\frac{\vout}{\vin}(s) \approx -sRC
-\label{eq:differentiator_series_cap}
-\end{equation}
-}
-
-which is the same as before. \autocite[79-80]{op-amp-circuits-johnson}
+% which is the same as before. \autocite[79-80]{op-amp-circuits-johnson}
 
 \section{Integrator}
 \begin{center}

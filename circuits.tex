@@ -29,15 +29,18 @@
     ]{biblatex}
 \addbibresource{references.bib}
 
+% TODO: add a command for properly typesetting derivatives
 \NewDocumentCommand\abs{m}{\ensuremath{\left|#1\right|}\xspace}
 \NewDocumentCommand\sub{m}{\ensuremath{_\mathrm{#1}}\xspace}
 
 \NewDocumentCommand\gnd{}{GND\xspace}
-\NewDocumentCommand\R{o}{\ensuremath{R\IfValueT{#1}{_#1}}\xspace}
-\NewDocumentCommand\C{o}{\ensuremath{C\IfValueT{#1}{_#1}}\xspace}
+\NewDocumentCommand\R{o}{\ensuremath{R\IfValueT{#1}{\sub{#1}}}\xspace}
+\NewDocumentCommand\Z{o}{\ensuremath{Z\IfValueT{#1}{\sub{#1}}}\xspace}
+\NewDocumentCommand\C{o}{\ensuremath{C\IfValueT{#1}{\sub{#1}}}\xspace}
 
 % TODO: what subscript to use for input? 'i' or 's'? GHLM uses 'i' except where the source resistance Rs is important (to distinguish it from the circuit input resistance Ri).
 \NewDocumentCommand\vin{o}{\ensuremath{v_{i\IfValueT{#1}{#1}}}\xspace}
+\NewDocumentCommand\iin{o}{\ensuremath{i_{i\IfValueT{#1}{#1}}}\xspace}
 \NewDocumentCommand\rin{}{\ensuremath{R_i}\xspace}
 \NewDocumentCommand\vout{o}{\ensuremath{v_{o}\IfValueT{#1}{#1}}\xspace}
 \NewDocumentCommand\rout{o}{\ensuremath{r_{o\IfValueT{#1}{#1}}}\xspace}
