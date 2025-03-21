@@ -190,26 +190,26 @@ For $v_1$,
 \vout = \frac{R_2}{R_1}\frac{R_5}{R_3}v_1, v_2 = V\sub{CM1} = V\sub{CM2} = 0
 \end{equation}
 
-\noindent (the output of the first op amp is $-(R_2/R_1)v_1$, which is then amplified by $-R_5/R_3$).
+(the output of the first op amp is $-(R_2/R_1)v_1$, which is then amplified by $-R_5/R_3$).
 For $v_2$,
 
 \begin{equation}
 \vout = -\frac{R_5}{R_4}v_2, v_1 = V\sub{CM1} = V\sub{CM2} = 0
 \end{equation}
 
-\noindent For $V\sub{CM1}$,
+For $V\sub{CM1}$,
 
 \begin{equation}
 \vout = -\left(1+\frac{R_2}{R_1}\right)\frac{R_5}{R_3}V\sub{CM1}, v_{1} = v_{2} = V\sub{CM2} = 0
 \end{equation}
 
-\noindent For $V\sub{CM2}$,
+For $V\sub{CM2}$,
 
 \begin{equation}
 \vout = \left(1+\frac{R_5}{R_3 \parallel R_4}\right)V\sub{CM2} = \left(1+\frac{(R_3+R_4)R_5}{R_3R_4}\right)V\sub{CM2}, v_1 = v_2 = V\sub{CM2} = 0
 \end{equation}
 
-\noindent Putting it all together,
+Putting it all together,
 
 \textcolor{red}{
 \begin{equation}
@@ -218,7 +218,7 @@ For $v_2$,
 \end{equation}
 }
 
-\noindent If all the resistors are equal, the transfer function simplifies to
+If all the resistors are equal, the transfer function simplifies to
 
 \textcolor{red}{
 \begin{equation}
@@ -244,16 +244,16 @@ For $v_2$,
 The differentiator is similar to the inverting op amp amplifier except that the resistor in series between the input and the op amp's inverting input is replaced with a capacitor.
 The ideal differentiator has \(R\sub{A} = C\sub{F} = 0\) (i.e., the resistor is a short circuit and the feedback capacitor is an open circuit), though a practical implementation requires these components.
 For the ideal differentiator, the inverting input's voltage is equal to \gnd (the op amp's input bias current produces a negligible voltage across \(R\sub{B}\)) and the non-inverting input is at a virtual ground.
-The capacitor voltage is thus equal to \(\vin(t)\) and by definition the current through it is \(\iin(t)\), so \[\iin(t) = C\frac{d\vin(t)}{dt}\]
+The capacitor voltage is thus equal to \(\vin(t)\) and by definition the current through it is \(\iin(t)\), so \[\iin(t) = C\odv{\vin(t)}{t}\]
 
 \ac{kcl} on the inverting input node means that \(\iin(t) = -\vout(t)/R\) also, which relates the input to the output:
 
-\[C\frac{d\vin(t)}{dt} = -\frac{\vout(t)}{R}\]
+\[C\odv{\vin(t)}{t} = -\frac{\vout(t)}{R}\]
 
 Solving for \(\vout(t)\), we find that it is proportional to the derivative of \(\vin(t)\):
 
 \begin{equation}
-	\vout(t) = -RC\frac{d\vin(t)}{dt}
+	\vout(t) = -RC\odv{\vin(t)}{t}
 	\label{eq:ideal_differentiator_time}
 \end{equation}
 
