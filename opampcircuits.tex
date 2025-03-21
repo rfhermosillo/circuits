@@ -30,14 +30,14 @@ Multiple op amp inverting (or non-inverting) amplifiers with lower individual ga
 \begin{center}
 	\begin{circuitikz}
 		\draw (0, 0) node[op amp] (opamp) {}
-		(opamp.-) to[short,-*] ++(-1,0) coordinate(A)
-		(opamp.+) to[short] ++(-1,0) coordinate(B)
-		(B) to[R=$R_3$] ++(0,-2) node[ground](G){}
-		(opamp.out) to[short,*-o] ++(1,0) coordinate(C)
-		(A) to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-1,0) node[above]{\vin}
-		(A) |- ++(1,1) coordinate[yshift=1ex] (L1) to[R=$R_2$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout};
+		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
+		(opamp.+) to[short] ++(-0.5,0) (opamp.+ -| VG) to[R,l_=$R_3$] ++(0,-2) node[ground](G){}
+		(opamp.out) to[short,*-o] ++(1,0)
+		(VG) to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}
+		(VG) to[short] ++(0,1.25) |- ++(0.5,0) to[R=$R_2$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout};
 	\end{circuitikz}
 \end{center}
+
 The op amp's non-inverting input has ideally no input bias current so no current flows through $R_3$ or $C_1$ and the non-inverting input is at ground potential.
 Due to the op amp's high open loop gain, the inverting input is also ideally at ground potential (this is a ``virtual ground'' condition) so \ac{kcl} relates \vin and \vout through the inverting input node.
 There is ideally no input bias current into the op amp's inverting input so the current through $R_1$ (which is $\vin/R_1$) is equal to the current through $R_2$.
@@ -233,8 +233,8 @@ For $v_2$,
 	\begin{circuitikz}
 		\draw (0, 0) node[op amp] (opamp) {}
 		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
-		(opamp.+) to[short] coordinate(B) (B -| VG) to[R,l_=$R\sub{B}$] ++(0,-2) node[ground](G){}
-		(opamp.out) to[short,*-o] ++(1,0) coordinate(C)
+		(opamp.+) to[short] ++(-0.5,0) (opamp.+ -| VG) to[R,l_=$R\sub{B}$] ++(0,-2) node[ground](G){}
+		(opamp.out) to[short,*-o] ++(1,0)
 		(VG) to[C,l_=$C$] ++(-2,0) to[R,l_=$R\sub{A}$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}
 		(VG) to[short,-*] ++(0,1.25) coordinate(VGU) |- ++(0.5,0) coordinate(RFL) to[R=$R$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout}
 		(VGU) to[short] ++(0,1.5) coordinate(CFL) to[short] (RFL |- CFL) to[C=$C\sub{F}$] ++(2,0) to[short] (CFL -| opamp.out) to[short,-*]  (VGU -| opamp.out);
