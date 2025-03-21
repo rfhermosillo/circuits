@@ -37,6 +37,8 @@
 \NewDocumentCommand\R{o}{\ensuremath{R\IfValueT{#1}{\sub{#1}}}\xspace}
 \NewDocumentCommand\Z{o}{\ensuremath{Z\IfValueT{#1}{\sub{#1}}}\xspace}
 \NewDocumentCommand\C{o}{\ensuremath{C\IfValueT{#1}{\sub{#1}}}\xspace}
+\NewDocumentCommand\f{o}{\ensuremath{f\IfValueT{#1}{\sub{#1}}}\xspace}
+\NewDocumentCommand\w{o}{\ensuremath{\omega\IfValueT{#1}{\sub{#1}}}\xspace}
 
 % TODO: what subscript to use for input? 'i' or 's'? GHLM uses 'i' except where the source resistance Rs is important (to distinguish it from the circuit input resistance Ri).
 \NewDocumentCommand\vin{o}{\ensuremath{v_{i\IfValueT{#1}{#1}}}\xspace}

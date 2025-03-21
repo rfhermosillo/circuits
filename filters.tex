@@ -11,31 +11,19 @@ Higher order Chebyshev filters transition even more sharply than lower order Che
 Thus, Butterworth and Chebyshev filters solve different problems -- the former approximates an ideal filter best in the pass band while the latter is a better approximation near the cutoff frequency. \autocite[107, 111]{op-amp-circuits-johnson}
 % figure out where to put the tables for the coefficients
 
-Filter transfer functions are given as a function of the complex frequency-domain variable
+Filter transfer functions are given as a function of the complex frequency-domain variable \(s = \sigma + \jmath\omega\), where the angular frequency \(\omega\) in \si{\radian/\second} is related to the frequency \(f\) in \si{\Hz} as
 
-\textcolor{red}{
 \begin{equation}
-	s = \sigma + \jmath\omega
-\end{equation}
-}
-
-where the angular frequency \(\omega\) in \si{\radian/\second} is related to the frequency \(f\) in \si{\Hz} as
-
-\textcolor{red}{
-\begin{equation}
-	f = \frac{1}{2\pi\omega}
+	f = \frac{\omega}{2\pi}
 	\label{eq:omega_to_f}
 \end{equation}
-}
 
 The filter transfer function, typically denoted \Hs, can be expressed as a rational function of polynomials with real coefficients:
 
-\textcolor{red}{
 \begin{equation}
 	\Hs = \Hpass\frac{\sum\limits_{i=0}^{m} a_i s^i}{\sum\limits_{i=0}^n b_i s^i}
 	\label{eq:general_filter_TF}
 \end{equation}
-}
 
 where \Hpass is the passband gain \autocite[8.5]{basic-linear-design-adi}.
 The degree of the denominator determines the order of the filter, and a higher order is required to achieve a sharper cutoff from passband to stopband.
@@ -46,24 +34,59 @@ Furthermore, higher order filters are often constructed by cascading multiple lo
 The result is that all but the simplest filters require active component(s).
 Analyses of passive filters in this chapter assume low source and high load impedances.
 
-The general form of a first-order \ac{lpf} is
-
-\textcolor{red}{
+Below are general forms for filters of various types and orders.
+% TODO: improve these by putting them in a table of numbered equations somehow?
 \begin{equation}
-	\Hs = \Hpass\frac{1}{1 + \wcutoff s}
+	\text{1st-order \acs{lpf}: }\Hs = \Hpass\frac{1}{1 + \wcutoff s}
 	\label{eq:1storderLPF}
 \end{equation}
-}
 
-where \wcutoff is the angular cutoff frequency.
-Similarly, the general form of a first-order \ac{hpf} is
-
-\textcolor{red}{
 \begin{equation}
-	\Hs = \Hpass\frac{\wcutoff s}{1 + \wcutoff s}
+	\text{1st-order \acs{lpf}: }\Hs = \Hpass\frac{\wcutoff s}{1 + \wcutoff s}
 	\label{eq:1storderHPF}
 \end{equation}
-}
+
+\begin{equation}
+	\text{2nd-order \acs{lpf}: }\Hs = \Hpass \frac{\wcutoff^2}{s^2 + \frac{\wcutoff}{Q}s + \wcutoff^2}
+	\label{eq:2ndorderLPF}
+\end{equation}
+
+\begin{equation}
+	\text{2nd-order \acs{hpf}: }\Hs = \Hpass \frac{s^2}{s^2 + \frac{\wcutoff}{Q}s + \wcutoff^2}
+	\label{eq:2ndorderHPF}
+\end{equation}
+
+\begin{equation}
+	\text{2nd-order \acs{bpf}: }\Hs = \Hpass \frac{\frac{\wcutoff}{Q}s}{s^2 + \frac{\wcutoff}{Q}s + \wcutoff^2}
+	\label{eq:2ndorderBPF}
+\end{equation}
+
+\begin{equation}
+	\text{2nd-order \acs{brf}: }\Hs = \Hpass \frac{s^2 + \w[z]^2}{s^2 + \frac{\wcutoff}{Q}s + \wcutoff^2}
+	\label{eq:2ndorderBRF}
+\end{equation}
+
+% The general form of a first-order \ac{lpf} is
+
+% \begin{equation}
+% 	\Hs = \Hpass\frac{1}{1 + \wcutoff s}
+% 	\label{eq:1storderLPF}
+% \end{equation}
+
+% where \wcutoff is the angular cutoff frequency.
+% Similarly, the general form of a first-order \ac{hpf} is
+
+% \begin{equation}
+% 	\Hs = \Hpass\frac{\wcutoff s}{1 + \wcutoff s}
+% 	\label{eq:1storderHPF}
+% \end{equation}
+
+% The general form of a secord-order \ac{lpf} is
+
+% \begin{equation}
+% 	\text{Second-order \ac{lpf}: }\Hs = \Hpass \frac{\wcutoff^2}{s^2 + \frac{\wcutoff}{Q}s + \wcutoff^2}
+% 	\label{eq:2ndorderLPF}
+% \end{equation}
 
 % TODO add the second order general equations from page 8.13.
 % TODO modify the 2nd order circuits below to follow the symbols used in these general equations.

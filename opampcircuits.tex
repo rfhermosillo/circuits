@@ -229,17 +229,15 @@ For $v_2$,
 
 % TODO: move these to the filter chapter since they are effectively filters?
 \section{Differentiator}
-% TODO: Fix the code for CF
 \begin{center}
 	\begin{circuitikz}
 		\draw (0, 0) node[op amp] (opamp) {}
-		(opamp.-) to[short,-*] ++(-1,0) coordinate(FB)
-		(opamp.+) to[short] ++(-1,0) coordinate(B)
-		(B) to[R=$R\sub{B}$] ++(0,-2) node[ground](G){}
+		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
+		(opamp.+) to[short] coordinate(B) (B -| VG) to[R,l_=$R\sub{B}$] ++(0,-2) node[ground](G){}
 		(opamp.out) to[short,*-o] ++(1,0) coordinate(C)
-		(FB) to[C,l_=$C$] ++(-2,0) to[R,l_=$R\sub{A}$] ++(-2,0) to[short,-o] ++(-1,0) node[above]{\vin}
-		(FB) to[short,-*] ++(0,1) coordinate(FL) |- ++(1,0) coordinate[yshift=1ex](L1) to[R=$R$] ++(2,0) coordinate(FR) -| (opamp.out) to[short] coordinate(OUT) ++(1,0) node[above]{\vout}
-		(FL) to[short] ++(0,1.5) coordinate(L2) to[C=$C\sub{F}$] ++(2,0) to[short] ++(1.375,0) to[short,-*] ++(0,-1.475) |- (FR);
+		(VG) to[C,l_=$C$] ++(-2,0) to[R,l_=$R\sub{A}$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}
+		(VG) to[short,-*] ++(0,1.25) coordinate(VGU) |- ++(0.5,0) coordinate(RFL) to[R=$R$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout}
+		(VGU) to[short] ++(0,1.5) coordinate(CFL) to[short] (RFL |- CFL) to[C=$C\sub{F}$] ++(2,0) to[short] (CFL -| opamp.out) to[short,-*]  (VGU -| opamp.out);
 	\end{circuitikz}
 \end{center}
 
@@ -259,8 +257,10 @@ Solving for \(\vout(t)\), we find that it is proportional to the derivative of \
 	\label{eq:ideal_differentiator_time}
 \end{equation}
 
+Another way to represent the transfer function is in the frequency domain.
+\ac{kcl} on the inverting input node using the capacitor's impedance \(1/(sC)\) relates the input to the output as \[\frac{\vout(s)}{R} = -\frac{\vin(s)}{1/(sC)}= -\vin(s)sC\]
 
-\noindent Another way to represent the transfer function is with complex numbers:
+Rearranging gives the transfer function as
 
 \begin{equation}
 	\frac{\vout}{\vin}(s) = -sRC
@@ -268,8 +268,8 @@ Solving for \(\vout(t)\), we find that it is proportional to the derivative of \
 \end{equation}
 
 Unfortunately, the ideal differentiator tends to be unstable and is sensitive to high frequency noise.
-Both of these problems are due to the fact that the gain increases as frequency increases -- the circuit's gain is theoretically infinite at very high frequencies, though a real op amp's bandwidth will limit the high frequency gain.
-To address this a problem a practical differentiator introduces \R[A] and \C[F].
+Both of these problems are due to the fact that the gain increases as frequency increases -- the circuit's gain is theoretically infinite at very high frequencies (though a real op amp's finite gain and bandwidth will limit the high frequency gain).
+To address these problems a practical differentiator introduces \R[A] and \C[F].
 Substituting the practical differentiator's impedances into \eqref{eq:inverting_amplifier_TF} we have:
 
 \[\frac{\vout}{\vin}(s) = -\frac{R \parallel 1/(s\C[F])}{\R[A] + 1/(s\C)}\]
@@ -277,27 +277,14 @@ Substituting the practical differentiator's impedances into \eqref{eq:inverting_
 From this equation it is clear that at high frequencies (\(s \to \infty\), where \C is a short circuit), \R[A] in series with \C prevents the denominator from approaching 0.
 After some algebra we obtain:
 
-\textcolor{red}{
 \begin{equation}
-	\frac{\vout}{\vin}(s) = \frac{-sRC}{(1 + s R \C[F])(1 + s\R[A] C)}
+	\frac{\vout}{\vin}(s) = \frac{-sRC}{(1 + s\R[A] C)(1 + s R \C[F])}
 	\label{eq:practical_differentiator_TF}
 \end{equation}
-}
 
-% TODO: finish the discussion of the practical differentiator.
-% One way to avoid the unwanted amplification of high frequency signals or noise is to place a resistor in series with the capacitor.
-% This, of course, gives the differentiator the same topology as the op amp inverting amplifier!
-% The difference is that the op amp inverting amplifier uses a much larger AC coupling capacitor to block very low frequency signals whose frequencies are below the range of frequencies the circuit is meant to operate on, while the capacitor in the differentiator is smaller to affect the appropriate range of frequencies.
-% Reusing the analysis of the op amp inverting amplifier but replacing the input resistor with the impedance of the input resistor and capacitor, the transfer function (using the complex $s$) is $\vout(1+R\sub{i}C) = -sRC\vin$. If $R\sub{i}C$ is much less than the period $T$ of the signals the circuit must operate on, however, the equation simplifies to
-
-% \textcolor{red}{
-% \begin{equation}
-% \frac{\vout}{\vin}(s) \approx -sRC
-% \label{eq:differentiator_series_cap}
-% \end{equation}
-% }
-
-% which is the same as before. \autocite[79-80]{op-amp-circuits-johnson}
+This equation shows that the practical differentiator has a zero at \(s = 0\) (like the ideal differentiator) but also poles at \(s = 1/(\R[A] C)\) and \(s = 1/(R \C[F])\), resulting in corner frequencies of \(\f[A] = 1/(2\pi\R[A] C)\) and \(\f[B] = 1/(2\pi R \C[F])\).
+The practical differentiator is a second-order \ac{bpf} since its transfer function has the form of \eqref{eq:2ndorderBPF}, though the differentiator is intended to be used for frequencies below the passband.
+\f[A] and \f[B] are chosen so that the lower corner frequency is at the maximum signal frequency to be differentiated, and the higher corner frequency is at a low enough frequency to keep the op amp stable.
 
 \section{Integrator}
 \begin{center}
