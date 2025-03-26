@@ -66,31 +66,8 @@ Below are general forms for filters of various types and orders.
 	\label{eq:2ndorderBRF}
 \end{equation}
 
-% The general form of a first-order \ac{lpf} is
-
-% \begin{equation}
-% 	\Hs = \Hpass\frac{1}{1 + \wcutoff s}
-% 	\label{eq:1storderLPF}
-% \end{equation}
-
-% where \wcutoff is the angular cutoff frequency.
-% Similarly, the general form of a first-order \ac{hpf} is
-
-% \begin{equation}
-% 	\Hs = \Hpass\frac{\wcutoff s}{1 + \wcutoff s}
-% 	\label{eq:1storderHPF}
-% \end{equation}
-
-% The general form of a secord-order \ac{lpf} is
-
-% \begin{equation}
-% 	\text{Second-order \ac{lpf}: }\Hs = \Hpass \frac{\wcutoff^2}{s^2 + \frac{\wcutoff}{Q}s + \wcutoff^2}
-% 	\label{eq:2ndorderLPF}
-% \end{equation}
-
-% TODO add the second order general equations from page 8.13.
 % TODO modify the 2nd order circuits below to follow the symbols used in these general equations.
-% TODO add Q, the quality factor from page 8.7: If Q is > 0.707, there will be some peaking in the filter response. If the Q is < 0.707, rolloff at F0 will be greater; it will have a more gentle slope and will begin sooner
+% TODO add Q (and alternative symbol definitions \alpha = 1/Q and \zeta = 2\alpha), the quality factor from page 8.7: If Q is > 0.707, there will be some peaking in the filter response. If the Q is < 0.707, rolloff at F0 will be greater; it will have a more gentle slope and will begin sooner
 
 Since \s is proportional to frequency, we can determine a filter's low frequency response by evaluating its \Hs as \(s \to 0\) and its high frequency response by evaluating its \Hs as \(s \to \infty\).
 
@@ -108,12 +85,10 @@ Viewing the resistor and capacitor as an impedance divider:
 \[\vout = \frac{\frac{1}{sC}}{R+\frac{1}{sC}}\vin\]
 Rearranging, this is
 
-\textcolor{red}{
 \begin{equation}
 	\frac{\vout}{\vin}(s) = \Hs = \frac{1}{1 + sRC}
 	\label{eq:rcLPF}
 \end{equation}
-}
 
 By inspection its cutoff frequency is \(\wcutoff = R C\).
 
@@ -130,12 +105,10 @@ Compared to the \ac{lpf}, the resistor and capacitor have been switched so the i
 \[\vout = \frac{R}{R+\frac{1}{sC}}\vin\]
 Rearranged, this is
 
-\textcolor{red}{
 \begin{equation}
 	\frac{\vout}{\vin}(s) = \Hs = \frac{sRC}{1 + sRC}
 	\label{eq:rcHPF}
 \end{equation}
-}
 
 By inspection its cutoff frequency is \(\wcutoff = R C\).
 
@@ -155,12 +128,10 @@ By inspection its cutoff frequency is \(\wcutoff = R C\).
 This circuit is simply a cascade of the \(RC\) passive \ac{lpf} and the non-inverting amplifier.
 The transfer function is thus
 
-\textcolor{red}{
 \begin{equation}
-	\frac{\vout}{\vin}(s) = \left(1+\frac{R_3}{R_2}\right)\left(\frac{1}{1 + sR_1 C}\right)
+	\frac{\vout}{\vin}(s) = \Hs = \left(1+\frac{R_3}{R_2}\right)\left(\frac{1}{1 + sR_1 C}\right)
 	\label{eq:1storderLPfilter}
 \end{equation}
-}
 
 As usual, the resistors should be chosen such that \(R_1 = R_2 \parallel R_3\) to minimize the error due to the op amp's input bias currents.
 
@@ -187,11 +158,10 @@ If \R[2] and \R[3] are used, the three resistors should be chosen such that the 
 This circuit is simply a cascade of the \(RC\) passive \ac{hpf} and the non-inverting amplifier.
 The transfer function is thus
 
-\textcolor{red}{
-	\begin{equation}\frac{\vout}{\vin}(s) = \left(1 + \frac{R_3}{R_2}\right)\left(\frac{sR_1 C}{1 + sR_1 C}\right)
+\begin{equation}
+	\frac{\vout}{\vin}(s) = \Hs = \left(1 + \frac{R_3}{R_2}\right)\left(\frac{sR_1 C}{1 + sR_1 C}\right)
 	\label{eq:active1storderHPF}
 \end{equation}
-}
 
 As usual, the resistors should be chosen such that \(R_1 = R_2 \parallel R_3\) to minimize the error due to the op amp's input bias currents.
 

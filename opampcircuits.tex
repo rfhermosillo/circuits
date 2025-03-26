@@ -242,8 +242,8 @@ If all the resistors are equal, the transfer function simplifies to
 \end{center}
 
 The differentiator is similar to the inverting op amp amplifier except that the resistor in series between the input and the op amp's inverting input is replaced with a capacitor.
-The ideal differentiator has \(R\sub{A} = C\sub{F} = 0\) (i.e., the resistor is a short circuit and the feedback capacitor is an open circuit), though a practical implementation requires these components.
-For the ideal differentiator, the inverting input's voltage is equal to \gnd (the op amp's input bias current produces a negligible voltage across \(R\sub{B}\)) and the non-inverting input is at a virtual ground.
+The ideal differentiator has \(\R[A] = \C[F] = 0\) (i.e., the resistor is a short circuit and the feedback capacitor is an open circuit), though a practical implementation requires these components.
+For the ideal differentiator, the inverting input's voltage is equal to \gnd (the op amp's input bias current produces a negligible voltage across \R[B]) and the non-inverting input is at a virtual ground.
 The capacitor voltage is thus equal to \(\vin(t)\) and by definition the current through it is \(\iin(t)\), so \[\iin(t) = C\odv{\vin(t)}{t}\]
 
 \ac{kcl} on the inverting input node means that \(\iin(t) = -\vout(t)/R\) also, which relates the input to the output:
@@ -288,18 +288,48 @@ The practical differentiator is a second-order \ac{bpf} since its transfer funct
 
 \section{Integrator}
 \begin{center}
-	\includegraphics[width=0.70\textwidth]{schematics/integrator.PNG}
+	\begin{circuitikz}
+		\draw (0, 0) node[op amp] (opamp) {}
+		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
+		(opamp.+) to[short] ++(-0.5,0) (opamp.+ -| VG) to[R,l_=$R\sub{A}$] ++(0,-2) node[ground](G){}
+		(opamp.out) to[short,*-o] ++(1,0)
+		(VG) to[R,l_=$R$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}
+		(VG) to[short,-*] ++(0,1.25) coordinate(VGU) |- ++(0.5,0) coordinate(FL) to[C=$C$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout}
+		(VGU) to[short] ++(0,1.5) coordinate(UFL) to[short] (FL |- UFL) to[C=$R\sub{F}$] ++(2,0) to[short] (UFL -| opamp.out) to[short,-*]  (VGU -| opamp.out);
+	\end{circuitikz}
 \end{center}
-The integrator is very similar to the differentiator -- just switch the resistor and capacitor. Using impedance and \ac{kcl} again, the transfer function is
 
-\textcolor{red}{
+The ideal integrator, which omits \R[F] so that it is an open circuit, is very similar to the ideal differentiator -- the resistor \R and capacitor \C swap places.
+The inverting input's voltage is equal to \gnd (the op amp's input bias current produces a negligible voltage across \(R\sub{A}\)) and the non-inverting input is at a virtual ground.
+The voltage across \R is thus equal to \(\vin(t)\) and the current through it is \[\iin(t) = \vin(t)/\R\]
+By \ac{kcl} on the inverting input node and the fact that the input bias current into the op amp's inverting input is negliglible, \(\iin(t)\) is also the current through the capacitor.
+The voltage across \C is \(-\vout(t)\) so
+
+so \[\iin(t) = -C\odv{\vout(t)}{t}\]
+
+Equating the two expressions for \(\iin(t)\) and solving for \(\vout(t)\):
+
 \begin{equation}
-\vout = \frac{-1}{RC}\int \vin dt\ = \frac{-\vin}{sRC} = \frac{-\vin}{\jmath \omega RC}
-\label{eq:integrator}
+	\vout(t) = \frac{-1}{RC}\int \vin(t) \odif{t} + \VOUT
+	\label{eq:ideal_integrator_time}
 \end{equation}
-}
 
-The integrator does not suffer from the same high frequency noise issues as the differentiator since it naturally attenuates high frequency signals.
+where \VOUT is the initial output voltage.
+
+The transfer function in the frequency domain can be derived using \ac{kcl} at the inverting input node and the capacitor's impedance \(1/(sC)\):
+
+\begin{equation}
+	\frac{\vout}{\vin}(s) = \Hs = -\frac{1}{sRC}
+	\label{eq:ideal_integrator_TF}
+\end{equation}
+
+To minimize the error due to the op amp's input bias current, set \(\R[A] = R \parallel \R[F]\);
+if this error is negligible \R[A] can be replaced with a short circuit.
+
+Unfortunately, \C is an open circuit at \DC so the ideal integrator provides no \DC feedback for the op amp.
+To avoid operating the op amp with an open loop, it is necessary to add a finite resistor \R[F] in parallel with \C.
+
+% TODO: finish description of practical integrator
 
 % TODO
 %\section{Op Amp Current Doubler}
