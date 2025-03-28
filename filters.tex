@@ -11,7 +11,7 @@ Higher order Chebyshev filters transition even more sharply than lower order Che
 Thus, Butterworth and Chebyshev filters solve different problems -- the former approximates an ideal filter best in the pass band while the latter is a better approximation near the cutoff frequency. \autocite[107, 111]{op-amp-circuits-johnson}
 % figure out where to put the tables for the coefficients
 
-Filter transfer functions are given as a function of the complex frequency-domain variable \(s = \sigma + \jmath\omega\), where the angular frequency \(\omega\) in \si{\radian/\second} is related to the frequency \(f\) in \si{\Hz} as
+Filter transfer functions are given as a function of the complex frequency-domain variable \(s = \sigma + \jomega\), where the angular frequency \(\omega\) in \si{\radian/\second} is related to the frequency \(f\) in \si{\Hz} as
 
 \begin{equation}
 	f = \frac{\omega}{2\pi}
@@ -34,15 +34,41 @@ Furthermore, higher order filters are often constructed by cascading multiple lo
 The result is that all but the simplest filters require active component(s).
 Analyses of passive filters in this chapter assume low source and high load impedances.
 
-Below are general forms for filters of various types and orders.
-% TODO: improve these by putting them in a table of numbered equations somehow?
+Filters' transfer functions are characterized by the cutoff frequency \fcutoff, angular cutoff frequency \wcutoff, and/or the time constant \(\tau\) in \si{\second}.
+\fcutoff and \wcutoff are related by \eqref{eq:omega_to_f}, and \(\tau\) to the cutoff frequencies by
+
 \begin{equation}
-	\text{1st-order \acs{lpf}: }\Hs = \Hpass\frac{1}{1 + \wcutoff s}
+	\tau = \frac{1}{\wcutoff} = \frac{1}{2\pi\fcutoff}
+	\label{eq:tau_to_cutoff_frequency}
+\end{equation}
+
+Second and higher order filters are also characterized by the dimensionless ``quality factor'' \Q or alternatively as the damping ratio
+
+\begin{equation}
+	\alpha = \frac{1}{Q}
+	\label{eq:filter_Q_to_damping_ratio1}
+\end{equation}
+
+The damping ratio may alternatively be expressed as
+
+\begin{equation}
+	\zeta = 2\alpha = \frac{2}{Q}
+	\label{eq:filter_Q_to_damping_ratio2}
+\end{equation}
+
+A filter with high \Q is underdamped, exhibiting peaking in the frequency response and oscillation that eventually converges to a steady-state value in the step response \autocite[8.7]{basic-linear-design-adi}.
+
+Below are general forms for filters of various types and orders \autocite[for second-order equations see][8.13]{basic-linear-design-adi}:
+
+% TODO: improve these by putting them in a table of numbered equations somehow?
+% TODO: add alternative versions using \alpha and/or \zeta?
+\begin{equation}
+	\text{1st-order \acs{lpf}: }\Hs = \Hpass\frac{\wcutoff}{\wcutoff + s} = \Hpass\frac{1}{1 + \tau s}
 	\label{eq:1storderLPF}
 \end{equation}
 
 \begin{equation}
-	\text{1st-order \acs{lpf}: }\Hs = \Hpass\frac{\wcutoff s}{1 + \wcutoff s}
+	\text{1st-order \acs{hpf}: }\Hs = \Hpass\frac{s}{\wcutoff + s} = \Hpass\frac{\tau s}{1 + \tau s}
 	\label{eq:1storderHPF}
 \end{equation}
 
@@ -67,7 +93,6 @@ Below are general forms for filters of various types and orders.
 \end{equation}
 
 % TODO modify the 2nd order circuits below to follow the symbols used in these general equations.
-% TODO add Q (and alternative symbol definitions \alpha = 1/Q and \zeta = 2\alpha), the quality factor from page 8.7: If Q is > 0.707, there will be some peaking in the filter response. If the Q is < 0.707, rolloff at F0 will be greater; it will have a more gentle slope and will begin sooner
 
 Since \s is proportional to frequency, we can determine a filter's low frequency response by evaluating its \Hs as \(s \to 0\) and its high frequency response by evaluating its \Hs as \(s \to \infty\).
 
@@ -90,7 +115,7 @@ Rearranging, this is
 	\label{eq:rcLPF}
 \end{equation}
 
-By inspection its cutoff frequency is \(\wcutoff = R C\).
+By inspection its cutoff frequency is \(\wcutoff = 1/(R C)\).
 
 \subsection{First-order \(RC\) passive \acl{hpf}}
 \begin{center}
@@ -110,7 +135,7 @@ Rearranged, this is
 	\label{eq:rcHPF}
 \end{equation}
 
-By inspection its cutoff frequency is \(\wcutoff = R C\).
+By inspection its cutoff frequency is \(\wcutoff = 1/(R C)\).
 
 \subsection{First-order non-inverting active \acl{lpf}}
 \begin{center}

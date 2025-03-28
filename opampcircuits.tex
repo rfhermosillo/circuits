@@ -323,13 +323,21 @@ The transfer function in the frequency domain can be derived using \ac{kcl} at t
 	\label{eq:ideal_integrator_TF}
 \end{equation}
 
-To minimize the error due to the op amp's input bias current, set \(\R[A] = R \parallel \R[F]\);
-if this error is negligible \R[A] can be replaced with a short circuit.
-
 Unfortunately, \C is an open circuit at \DC so the ideal integrator provides no \DC feedback for the op amp.
 To avoid operating the op amp with an open loop, it is necessary to add a finite resistor \R[F] in parallel with \C.
+The feedback impedance is now \(\Z[F] = \R[F] \parallel 1/(sC)\), and after some algebra we find that the transfer function is now
 
-% TODO: finish description of practical integrator
+\begin{equation}
+	\frac{\vout}{\vin}(s) = \Hs = -\frac{\R[F]}{R}\left(\frac{1}{1 + s\R[F]C}\right)
+	\label{eq:practical_integrator_TF}
+\end{equation}
+
+This simplifies to \eqref{eq:ideal_integrator_TF} as \(\R[F] \to \infty\) since \(s\R[F]C \gg 1 \implies 1 + s\R[F]C \approx s\R[F]C\), so the \R[F] terms in the numerator and denominator cancel.
+The transfer function of the practical integrator also matches the general form of the transfer function for a 1st-order \ac{lpf} given in \eqref{eq:1storderLPF}.
+The practical integrator acts as an inverting amplifier for frequencies below \(\wcutoff = 1/(\R[F]C)\) and as an integrator for frequencies above \wcutoff, so \R[F] should be set at high as possible (to minimize \wcutoff) while staying within the capabilities of the op amp;
+relevant specifications of the op amp for determining \R[F] include its gain-bandwidth product, input offset voltage (which is amplified at the output by the \DC gain of the circuit), and input bias current (which flows through \R[F] and introduces an error voltage).
+To minimize the error due to the op amp's input bias current, set \(\R[A] = R \parallel \R[F]\);
+if this error is negligible \R[A] can be replaced with a short circuit.
 
 % TODO
 %\section{Op Amp Current Doubler}
