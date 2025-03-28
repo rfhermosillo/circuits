@@ -47,13 +47,16 @@
 \NewDocumentCommand\VOUT{o}{\ensuremath{V_{O}\IfValueT{#1}{#1}}\xspace}
 \NewDocumentCommand\rout{o}{\ensuremath{r_{o\IfValueT{#1}{#1}}}\xspace}
 \NewDocumentCommand\rpi{o}{\ensuremath{r_{\pi\IfValueT{#1}{#1}}}\xspace}
-% TODO: add \Q (for quality factor), Vth, Vbe, \npn, \pnp, RL, \VT and \VTH (MOSFET threshold voltage), \BF (and what other betas?), \VGS, \VDS, \VCC, \VEE, \VDD, \VSS, \Vov for MOSFET overdrive
+% TODO: add Vth, Vbe, \npn, \pnp, RL, \VT and \VTH (MOSFET threshold voltage), \BF (and what other betas?), \VGS, \VDS, \VCC, \VEE, \VDD, \VSS, \Vov for MOSFET overdrive
 
 \NewDocumentCommand\s{}{\ensuremath{s}\xspace}
+\NewDocumentCommand\jomega{o}{\ensuremath{\jmath\omega_{\IfValueT{#1}{#1}}}\xspace}
 \NewDocumentCommand\Hs{}{\ensuremath{H(s)}\xspace}
 \NewDocumentCommand\Hpass{}{\ensuremath{H_0}\xspace}
 \NewDocumentCommand\fcutoff{}{\ensuremath{f\sub{c}}\xspace}
 \NewDocumentCommand\wcutoff{}{\ensuremath{\omega\sub{c}}\xspace}
+\NewDocumentCommand\Q{}{\ensuremath{Q}\xspace}
+
 
 % Use uppercase for the command names since \ac is already defined
 \NewDocumentCommand\AC{}{\ac{ac}\xspace}
