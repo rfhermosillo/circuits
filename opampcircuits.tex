@@ -27,6 +27,7 @@ The gain-bandwidth product depends on the particular op amp used to implement a 
 Multiple op amp inverting (or non-inverting) amplifiers with lower individual gains can be cascaded to achieve a high bandwidth along with high overall gain if the specified gain and bandwidth of an application circuit exceeds an individual op amp's gain-bandwidth product.
 
 \section{Inverting amplifier}
+\label{sec:inverting_amplifier}
 \begin{center}
 	\begin{circuitikz}
 		\draw (0, 0) node[op amp] (opamp) {}
@@ -227,119 +228,7 @@ If all the resistors are equal, the transfer function simplifies to
 \end{equation}
 }
 
-% TODO: move these to the filter chapter since they are effectively filters?
-\section{Differentiator}
-\begin{center}
-	\begin{circuitikz}
-		\draw (0, 0) node[op amp] (opamp) {}
-		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
-		(opamp.+) to[short] ++(-0.5,0) (opamp.+ -| VG) to[R,l_=$R\sub{B}$] ++(0,-2) node[ground](G){}
-		(opamp.out) to[short,*-o] ++(1,0)
-		(VG) to[C,l_=$C$] ++(-2,0) to[R,l_=$R\sub{A}$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}
-		(VG) to[short,-*] ++(0,1.25) coordinate(VGU) |- ++(0.5,0) coordinate(RFL) to[R=$R$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout}
-		(VGU) to[short] ++(0,1.5) coordinate(CFL) to[short] (RFL |- CFL) to[C=$C\sub{F}$] ++(2,0) to[short] (CFL -| opamp.out) to[short,-*]  (VGU -| opamp.out);
-	\end{circuitikz}
-\end{center}
-
-The differentiator is similar to the inverting op amp amplifier except that the resistor in series between the input and the op amp's inverting input is replaced with a capacitor.
-The ideal differentiator has \(\R[A] = \C[F] = 0\) (i.e., the resistor is a short circuit and the feedback capacitor is an open circuit), though a practical implementation requires these components.
-For the ideal differentiator, the inverting input's voltage is equal to \gnd (the op amp's input bias current produces a negligible voltage across \R[B]) and the non-inverting input is at a virtual ground.
-The capacitor voltage is thus equal to \(\vin(t)\) and by definition the current through it is \(\iin(t)\), so \[\iin(t) = C\odv{\vin(t)}{t}\]
-
-\ac{kcl} on the inverting input node means that \(\iin(t) = -\vout(t)/R\) also, which relates the input to the output:
-
-\[C\odv{\vin(t)}{t} = -\frac{\vout(t)}{R}\]
-
-Solving for \(\vout(t)\), we find that it is proportional to the derivative of \(\vin(t)\):
-
-\begin{equation}
-	\vout(t) = -RC\odv{\vin(t)}{t}
-	\label{eq:ideal_differentiator_time}
-\end{equation}
-
-Another way to represent the transfer function is in the frequency domain.
-\ac{kcl} on the inverting input node using the capacitor's impedance \(1/(sC)\) relates the input to the output as \[\frac{\vout(s)}{R} = -\frac{\vin(s)}{1/(sC)}= -\vin(s)sC\]
-
-Rearranging gives the transfer function as
-
-\begin{equation}
-	\frac{\vout}{\vin}(s) = -sRC
-	\label{eq:ideal_differentiator_TF}
-\end{equation}
-
-Unfortunately, the ideal differentiator tends to be unstable and is sensitive to high frequency noise.
-Both of these problems are due to the fact that the gain increases as frequency increases -- the circuit's gain is theoretically infinite at very high frequencies (though a real op amp's finite gain and bandwidth will limit the high frequency gain).
-To address these problems a practical differentiator introduces \R[A] and \C[F].
-Substituting the practical differentiator's impedances into \eqref{eq:inverting_amplifier_TF} we have:
-
-\[\frac{\vout}{\vin}(s) = -\frac{R \parallel 1/(s\C[F])}{\R[A] + 1/(s\C)}\]
-
-From this equation it is clear that at high frequencies (\(s \to \infty\), where \C is a short circuit), \R[A] in series with \C prevents the denominator from approaching 0.
-After some algebra we obtain:
-
-\begin{equation}
-	\frac{\vout}{\vin}(s) = \frac{-sRC}{(1 + s\R[A] C)(1 + s R \C[F])}
-	\label{eq:practical_differentiator_TF}
-\end{equation}
-
-This equation shows that the practical differentiator has a zero at \(s = 0\) (like the ideal differentiator) but also poles at \(s = 1/(\R[A] C)\) and \(s = 1/(R \C[F])\), resulting in corner frequencies of \(\f[A] = 1/(2\pi\R[A] C)\) and \(\f[B] = 1/(2\pi R \C[F])\).
-The practical differentiator is a second-order \ac{bpf} since its transfer function has the form of \eqref{eq:2ndorderBPF}, though the differentiator is intended to be used for frequencies below the passband.
-\f[A] and \f[B] are chosen so that the lower corner frequency is at the maximum signal frequency to be differentiated, and the higher corner frequency is at a low enough frequency to keep the op amp stable.
-
-\section{Integrator}
-\begin{center}
-	\begin{circuitikz}
-		\draw (0, 0) node[op amp] (opamp) {}
-		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
-		(opamp.+) to[short] ++(-0.5,0) (opamp.+ -| VG) to[R,l_=$R\sub{A}$] ++(0,-2) node[ground](G){}
-		(opamp.out) to[short,*-o] ++(1,0)
-		(VG) to[R,l_=$R$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}
-		(VG) to[short,-*] ++(0,1.25) coordinate(VGU) |- ++(0.5,0) coordinate(FL) to[C=$C$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout}
-		(VGU) to[short] ++(0,1.5) coordinate(UFL) to[short] (FL |- UFL) to[C=$R\sub{F}$] ++(2,0) to[short] (UFL -| opamp.out) to[short,-*]  (VGU -| opamp.out);
-	\end{circuitikz}
-\end{center}
-
-The ideal integrator, which omits \R[F] so that it is an open circuit, is very similar to the ideal differentiator -- the resistor \R and capacitor \C swap places.
-The inverting input's voltage is equal to \gnd (the op amp's input bias current produces a negligible voltage across \(R\sub{A}\)) and the non-inverting input is at a virtual ground.
-The voltage across \R is thus equal to \(\vin(t)\) and the current through it is \[\iin(t) = \vin(t)/\R\]
-By \ac{kcl} on the inverting input node and the fact that the input bias current into the op amp's inverting input is negliglible, \(\iin(t)\) is also the current through the capacitor.
-The voltage across \C is \(-\vout(t)\) so
-
-so \[\iin(t) = -C\odv{\vout(t)}{t}\]
-
-Equating the two expressions for \(\iin(t)\) and solving for \(\vout(t)\):
-
-\begin{equation}
-	\vout(t) = \frac{-1}{RC}\int \vin(t) \odif{t} + \VOUT
-	\label{eq:ideal_integrator_time}
-\end{equation}
-
-where \VOUT is the initial output voltage.
-
-The transfer function in the frequency domain can be derived using \ac{kcl} at the inverting input node and the capacitor's impedance \(1/(sC)\):
-
-\begin{equation}
-	\frac{\vout}{\vin}(s) = \Hs = -\frac{1}{sRC}
-	\label{eq:ideal_integrator_TF}
-\end{equation}
-
-Unfortunately, \C is an open circuit at \DC so the ideal integrator provides no \DC feedback for the op amp.
-To avoid operating the op amp with an open loop, it is necessary to add a finite resistor \R[F] in parallel with \C.
-The feedback impedance is now \(\Z[F] = \R[F] \parallel 1/(sC)\), and after some algebra we find that the transfer function is now
-
-\begin{equation}
-	\frac{\vout}{\vin}(s) = \Hs = -\frac{\R[F]}{R}\left(\frac{1}{1 + s\R[F]C}\right)
-	\label{eq:practical_integrator_TF}
-\end{equation}
-
-This simplifies to \eqref{eq:ideal_integrator_TF} as \(\R[F] \to \infty\) since \(s\R[F]C \gg 1 \implies 1 + s\R[F]C \approx s\R[F]C\), so the \R[F] terms in the numerator and denominator cancel.
-The transfer function of the practical integrator also matches the general form of the transfer function for a 1st-order \ac{lpf} given in \eqref{eq:1storderLPF}.
-The practical integrator acts as an inverting amplifier for frequencies below \(\wcutoff = 1/(\R[F]C)\) and as an integrator for frequencies above \wcutoff, so \R[F] should be set at high as possible (to minimize \wcutoff) while staying within the capabilities of the op amp;
-relevant specifications of the op amp for determining \R[F] include its gain-bandwidth product, input offset voltage (which is amplified at the output by the \DC gain of the circuit), and input bias current (which flows through \R[F] and introduces an error voltage).
-To minimize the error due to the op amp's input bias current, set \(\R[A] = R \parallel \R[F]\);
-if this error is negligible \R[A] can be replaced with a short circuit.
-
 % TODO
 %\section{Op Amp Current Doubler}
 % see p. 17 of the OPA454 datasheet. Slave amplifier is essentially a buffer in parallel with an op amp circuit (in any configuration)
-% also add somewhere that you can add a class B push-pull output stage to increase the current output of the op amp (see also p. 17 of the OPA454 datasheet)
+% Also add somewhere that you can add a class B push-pull output stage to increase the current output of the op amp (see also p. 17 of the OPA454 datasheet). Put in a separate composite amplifier chapter?

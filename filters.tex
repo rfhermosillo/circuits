@@ -193,9 +193,143 @@ As usual, the resistors should be chosen such that \(R_1 = R_2 \parallel R_3\) t
 In this circuit \R[1] and \C perform the same filtering function as the passive \(RC\) filter so the op amp isn't strictly necessary -- however, the op amp provides gain for the filter and can provide isolation of the \(RC\) filter from other circuit elements which might affect its performance.
 If gain is not needed, the op amp can be configured as a voltage buffer by removing \R[2] and replacing \R[3] with a short.
 
-% TODO: add the inverting first-order filters from page 8.88 of the ADI filters chapter
-% \subsection{First-order inverting active \acl{lpf}}
+\subsection{First-order inverting active \acl{lpf}}
+\label{sec:inverting_active_lpf_1st}
+\begin{center}
+	\begin{circuitikz}
+		\draw (0, 0) node[op amp] (opamp) {}
+		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
+		(opamp.+) to[short] ++(-0.5,0) (opamp.+ -| VG) to[R,l_=$R\sub{A}$] ++(0,-2) node[ground](G){}
+		(opamp.out) to[short,*-o] ++(1,0)
+		(VG) to[R,l_=$R$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}
+		(VG) to[short,-*] ++(0,1.25) coordinate(VGU) |- ++(0.5,0) coordinate(FL) to[R=$R\sub{F}$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout}
+		(VGU) to[short] ++(0,1.5) coordinate(UFL) to[short] (FL |- UFL) to[C=$C$] ++(2,0) to[short] (UFL -| opamp.out) to[short,-*]  (VGU -| opamp.out);
+	\end{circuitikz}
+\end{center}
+
+This circuit is the same as the inverting amplifier from \autoref{sec:inverting_amplifier}, but with a capacitor in parallel with the feedback resistor so that the feedback impedance is
+
+\begin{equation*}
+	\Z[F] = \R[F] \parallel C = \frac{\R[F]/(sC)}{\R[F] + 1/(sC)} = \frac{\R[F]}{1 + s\R[F]C}
+\end{equation*}
+
+Substituting this impedance into \eqref{eq:inverting_amplifier_TF} we obtain
+
+\begin{equation}
+	\frac{\vout}{\vin}(s) = \Hs = -\frac{\R[F]}{R}\left(\frac{1}{1 + s\R[F]C}\right)
+	\label{eq:1storder_inverting_active_LPF}
+\end{equation}
+
+To minimize the error due to the op amp's input bias current, set \(\R[A] = R \parallel \R[F]\);
+if this error is negligible \R[A] can be replaced with a short circuit.
+
+% TODO: add from page 8.88 of the ADI filters chapter
 % \subsection{First-order inverting active \acl{hpf}}
+
+\section{Integrator and Differentiator}
+\subsection{Inverting Integrator}
+An ideal but impractical integrator circuit is:
+
+\begin{center}
+	\begin{circuitikz}
+		\draw (0, 0) node[op amp] (opamp) {}
+		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
+		(opamp.+) to[short] ++(-0.5,0) (opamp.+ -| VG) to[short] ++(0,-0.5) node[ground](G){}
+		(opamp.out) to[short,*-o] ++(1,0)
+		(VG) to[R,l_=$R$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}
+		(VG) to[short] ++(0,1.25) coordinate(VGU) |- ++(0.5,0) coordinate(FL) to[C=$C$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout};
+	\end{circuitikz}
+\end{center}
+
+The inverting input's voltage is at \gnd and the non-inverting input is at a virtual ground.
+The voltage across \R is thus equal to \(\vin(t)\) and the current through it is \[\iin(t) = \vin(t)/\R\]
+By \ac{kcl} on the inverting input node and the fact that the input bias current into the op amp's inverting input is negliglible, \(\iin(t)\) is also the current through the capacitor.
+The voltage across \C is \(-\vout(t)\) so \[\iin(t) = -C\odv{\vout(t)}{t}\]
+
+Equating the two expressions for \(\iin(t)\) and solving for \(\vout(t)\):
+
+\begin{equation}
+	\vout(t) = \frac{-1}{RC}\int \vin(t) \odif{t} + \VOUT
+	\label{eq:ideal_integrator_time}
+\end{equation}
+
+where \VOUT is the initial output voltage.
+
+The transfer function in the frequency domain can be derived using \ac{kcl} at the inverting input node and the capacitor's impedance \(1/(sC)\):
+
+\begin{equation}
+	\frac{\vout}{\vin}(s) = \Hs = -\frac{1}{sRC}
+	\label{eq:ideal_integrator_TF}
+\end{equation}
+
+Unfortunately, \C is an open circuit at \DC so the ideal integrator provides no \DC feedback for the op amp.
+To avoid operating the op amp with an open loop, it is necessary to add a finite resistor \R[F] in parallel with \C.
+Such \textbf{a practical integrator is the same as the inverting active \ac{lpf}} given in \autoref{sec:inverting_active_lpf_1st}.
+Its transfer function given in \eqref{eq:1storder_inverting_active_LPF} simplifies to \eqref{eq:ideal_integrator_TF} as \(\R[F] \to \infty\) since \(s\R[F]C \gg 1 \implies 1 + s\R[F]C \approx s\R[F]C\), so the \R[F] terms in the numerator and denominator cancel.
+
+The practical integrator acts as an inverting amplifier for frequencies below \(\wcutoff = 1/(\R[F]C)\) and as an integrator for frequencies above \wcutoff.
+The difference between a \iac{lpf} and integrator is that the frequencies of interest are below \wcutoff for the former and above \wcutoff for the latter. Also, the integrator should minimize \wcutoff and maximize the ``passband'' gain for more ideal behavior;
+setting \R[F] as high as possible while staying within the capabilities of the op amp achieves both of these objectives.
+Relevant specifications of the op amp for determining \R[F] include its gain-bandwidth product, input offset voltage (which is amplified at the output by the \DC gain of the circuit), and input bias current (which flows through \R[F] and introduces an error voltage).
+
+\subsection{Inverting Differentiator}
+\begin{center}
+	\begin{circuitikz}
+		\draw (0, 0) node[op amp] (opamp) {}
+		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
+		(opamp.+) to[short] ++(-0.5,0) (opamp.+ -| VG) to[R,l_=$R\sub{B}$] ++(0,-2) node[ground](G){}
+		(opamp.out) to[short,*-o] ++(1,0)
+		(VG) to[C,l_=$C$] ++(-2,0) to[R,l_=$R\sub{A}$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}
+		(VG) to[short,-*] ++(0,1.25) coordinate(VGU) |- ++(0.5,0) coordinate(RFL) to[R=$R$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout}
+		(VGU) to[short] ++(0,1.5) coordinate(CFL) to[short] (RFL |- CFL) to[C=$C\sub{F}$] ++(2,0) to[short] (CFL -| opamp.out) to[short,-*]  (VGU -| opamp.out);
+	\end{circuitikz}
+\end{center}
+
+Since differentiation is the opposite of integration, the operating principle of the differentiator circuit is to build an integrator but swap the placement of \R and \C.
+The ideal differentiator is also similar to the inverting op amp amplifier except that the resistor in series between the input and the op amp's inverting input is replaced with a capacitor.
+The circuit shown above is a practical differentiator which includes some necessary components for a real implementation, but an ideal differentiator has \(\R[A] = \C[F] = 0\) (i.e., the resistor is a short circuit and the feedback capacitor is an open circuit).
+For the ideal differentiator, the inverting input's voltage is equal to \gnd (the op amp's input bias current produces a negligible voltage across \R[B]) and the non-inverting input is at a virtual ground.
+The capacitor voltage is thus equal to \(\vin(t)\) and by definition the current through it is \(\iin(t)\), so \[\iin(t) = C\odv{\vin(t)}{t}\]
+
+\ac{kcl} on the inverting input node means that \(\iin(t) = -\vout(t)/R\) also, which relates the input to the output:
+
+\[C\odv{\vin(t)}{t} = -\frac{\vout(t)}{R}\]
+
+Solving for \(\vout(t)\), we find that it is proportional to the derivative of \(\vin(t)\):
+
+\begin{equation}
+	\vout(t) = -RC\odv{\vin(t)}{t}
+	\label{eq:ideal_differentiator_time}
+\end{equation}
+
+Another way to represent the transfer function is in the frequency domain.
+\ac{kcl} on the inverting input node using the capacitor's impedance \(1/(sC)\) relates the input to the output as \[\frac{\vout(s)}{R} = -\frac{\vin(s)}{1/(sC)}= -\vin(s)sC\]
+
+Rearranging gives the transfer function as
+
+\begin{equation}
+	\frac{\vout}{\vin}(s) = -sRC
+	\label{eq:ideal_differentiator_TF}
+\end{equation}
+
+Unfortunately, the ideal differentiator tends to be unstable and is sensitive to high frequency noise.
+Both of these problems are due to the fact that the gain increases as frequency increases -- the circuit's gain is theoretically infinite at very high frequencies (though a real op amp's finite gain and bandwidth will limit the high frequency gain).
+To address these problems a practical differentiator introduces \R[A] and \C[F].
+Substituting the practical differentiator's impedances into \eqref{eq:inverting_amplifier_TF} we have:
+
+\[\frac{\vout}{\vin}(s) = -\frac{R \parallel 1/(s\C[F])}{\R[A] + 1/(s\C)}\]
+
+From this equation it is clear that at high frequencies (\(s \to \infty\), where \C is a short circuit), \R[A] in series with \C prevents the denominator from approaching 0.
+After some algebra we obtain:
+
+\begin{equation}
+	\frac{\vout}{\vin}(s) = \frac{-sRC}{(1 + s\R[A] C)(1 + s R \C[F])}
+	\label{eq:practical_differentiator_TF}
+\end{equation}
+
+This equation shows that the practical differentiator has a zero at \(s = 0\) (like the ideal differentiator) but also poles at \(s = 1/(\R[A] C)\) and \(s = 1/(R \C[F])\), resulting in corner frequencies of \(\f[A] = 1/(2\pi\R[A] C)\) and \(\f[B] = 1/(2\pi R \C[F])\).
+The practical differentiator is a second-order \ac{bpf} since its transfer function has the form of \eqref{eq:2ndorderBPF}, though the differentiator is intended to be used for frequencies below the passband.
+\f[A] and \f[B] are chosen so that the lower corner frequency is at the maximum signal frequency to be differentiated, and the higher corner frequency is at a low enough frequency to keep the op amp stable.
 
 \section{Second-order low and high pass filters}
 % TODO: rename the VCVS filters to Sallen-Key (see ADI filters p. 8.72)
