@@ -45,31 +45,25 @@ There is ideally no input bias current into the op amp's inverting input so the 
 The $R_2$ terminal connected to the inverting input is at ground potential so the voltage across $R_2$ is equal to \vout.
 The transfer function is therefore
 
-\textcolor{red}{
 \begin{equation}
 	\frac{\vout}{\vin} = -\frac{R_2}{R_1}
 	\label{eq:inverting_amplifier_TF}
 \end{equation}
-}
 
 Since the non-inverting input is at ground potential the input resistance is simply
 
-\textcolor{red}{
 \begin{equation}
 	\rin = R_1
 \end{equation}
-}
 
 Unfortunately, this is considerably lower than the op amp's input impedance.
 \rin can be improved by maximizing $R_1$ (and therefore also $R_2$) while not making the resistors so high than the op amp's input bias currents produce a significant bias voltages. 
 
 $R_3$ is typically a short circuit, but may be set to
 
-\textcolor{red}{
 \begin{equation}
 R_3 = R_1 \parallel R_2
 \end{equation}
-}
 
 in order to balance the bias voltages produced by the op amp's input bias currents.
 
@@ -91,16 +85,15 @@ The op amp's inverting input is at virtual ground so the time constant is \(\tau
 	\end{circuitikz}
 \end{center}
 
-The resistors form what is essentially a voltage divider network, with \vout as the voltage divider ``input'' and the op amp's inverting input as the voltage divider ``output''. The inputs of an op amp with negative feedback are ideally at the same voltage, so the voltage divider ``output'' is \vin.
+The resistors form what is essentially a voltage divider network, with \vout as the voltage divider ``input'' and the op amp's inverting input as the voltage divider ``output''.
+The inputs of an op amp with negative feedback are ideally at the same voltage, so the voltage divider ``output'' is \vin.
 Such a voltage divider has the relation \[\vin = \frac{R_1}{R_1 + R_2}\vout\]
 Rearranging gives the transfer function:
 
-\textcolor{red}{
 \begin{equation}
 	\frac{\vout}{\vin} = 1+\frac{R_2}{R_1}
 	\label{eq:noninvertingopampamplifier}
 \end{equation}
-}
 
 The transfer function shows that this circuit is a voltage buffer if \(R_1 = R_2\), which is as simple as replacing the resistors with wires.
 The input impedance of this amplifier is the same as the op amp's input impedance, which is much higher than can be achieved with the inverting amplifier's \rin.
@@ -118,22 +111,37 @@ The capacitor sees an equivalent resistance to \gnd of \(R_1 + R_2\) so the cuto
 
 \section{Inverting summing amplifier}
 \begin{center}
-	\includegraphics[width=0.70\textwidth]{schematics/invsummingamp.PNG}
+	\begin{circuitikz}
+		\draw (0, 0) node[op amp] (opamp) {}
+		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
+		(opamp.+) to[short] ++(-0.5,0) (opamp.+ -| VG) to[R,l_=$R\sub{A}$] ++(0,-2) node[ground](G){}
+		(opamp.out) to[short,*-o] ++(1,0)
+		(VG) to[short, -*] ++(-1,0) coordinate(vin_junction) to[short] ++(-0.5,0.5) to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[1]}
+		(vin_junction) to[short] ++(-0.5,-0.5) to[R,l_=$R_2$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[2]}
+		(VG) to[short] ++(0,1.25) |- ++(0.5,0) to[R=$R\sub{F}$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout};
+	\end{circuitikz}
 \end{center}
 
-This circuit multiplies each input voltage by a factor determined by a resistor ratio, sums these amplified voltages, and inverts the result.
-It is essentially an op amp inverting amplifier with multiple inputs.
-It is often used as an audio mixer, where multiple voltage signals must be combined into one (for example, voltage signals from multiple microphones which must be combined into one signal for recording).
-The transfer function can be found by superposition of the inputs and, for the two input case, is
+The inverting summing amplifier is just an op amp inverting amplifier with multiple inputs.
+It is often used as an audio mixer, where multiple voltage signals must be combined into one (for example, voltage signals from multiple microphones which must be combined into one).
+The output voltage can be found by superposition of the inputs.
+The contribution of each input to the output is given by \eqref{eq:inverting_amplifier_TF} so the total output voltage is
 
-\textcolor{red}{
 \begin{equation}
-\vout = -\left(\frac{R_3}{R_1}\vin[1] + \frac{R_3}{R_2}\vin[2]\right)
-\label{eq:invertingsummingamplifier}
+	\vout = -\left(\sum_{x=1}^{n}\frac{\R[F]}{R_x}\vin[x]\right)
+	\label{eq:invertingsummingamplifier}
 \end{equation}
-}
 
-%To minimize the error due to the op amp's input bias currents $R_{5}$ should equal $R_{1}||R_{2}||R_{3}||R_{4}$.
+The op amp maintains the summing junction at virtual ground so that each input's contribution to the output is independent of the other inputs.
+Otherwise, each input would act as a load to all the other inputs, which means the gain of each input would be a function of not only the input's series resistor but also the number of inputs and load.
+
+To minimize the error due to the op amp's input bias currents set \R[A] equal to the parallel combination of all the other resistors:
+
+\begin{equation}
+	\R[A] = \left(\frac{1}{\R[F]} + \sum_{x=1}^{n}\frac{1}{R_x}\right)^{-1}
+\end{equation}
+
+Alternatively, replace \R[A] with a short circuit if that error is negligible.
 
 \section{Non-inverting summing amplifier}
 \begin{center}
