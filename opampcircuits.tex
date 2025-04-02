@@ -78,8 +78,8 @@ The op amp's inverting input is at virtual ground so the time constant is \(\tau
 	\begin{circuitikz}
 		\draw (0,0) node[above]{\vin} to[short, o-] ++(1,0)
 		node[op amp, noinv input up, anchor=+](OA){}
-		(OA.out) to[R=$R_2$] ++(0,-2) coordinate(FB)
-		to[R=$R_1$] ++(0,-2) node[ground]{}
+		(OA.out) to[R=$R\sub{F}$] ++(0,-2) coordinate(FB)
+		to[R=$R\sub{G}$] ++(0,-2) node[ground]{}
 		(OA.out) to[short, *-o] ++(1,0) node[above]{\vout}
 		(OA.-) -- (FB -| OA.-) to[short, -*] (FB);
 	\end{circuitikz}
@@ -87,15 +87,15 @@ The op amp's inverting input is at virtual ground so the time constant is \(\tau
 
 The resistors form what is essentially a voltage divider network, with \vout as the voltage divider ``input'' and the op amp's inverting input as the voltage divider ``output''.
 The inputs of an op amp with negative feedback are ideally at the same voltage, so the voltage divider ``output'' is \vin.
-Such a voltage divider has the relation \[\vin = \frac{R_1}{R_1 + R_2}\vout\]
+Such a voltage divider has the relation \[\vin = \frac{\R[G]}{\R[G] + \R[F]}\vout\]
 Rearranging gives the transfer function:
 
 \begin{equation}
-	\frac{\vout}{\vin} = 1+\frac{R_2}{R_1}
+	\frac{\vout}{\vin} = 1+\frac{\R[F]}{\R[G]}
 	\label{eq:noninvertingopampamplifier}
 \end{equation}
 
-The transfer function shows that this circuit is a voltage buffer if \(R_1 = R_2\), which is as simple as replacing the resistors with wires.
+The transfer function shows that this circuit is a voltage buffer if \(\R[F] = 0\) and/or \(\R[G] \to \infty\), which is as simple as replacing the resistors with a wire and open circuit, respectively.
 The input impedance of this amplifier is the same as the op amp's input impedance, which is much higher than can be achieved with the inverting amplifier's \rin.
 The very high input impedance and very low output impedance of op amps ensures the non-inverting amplifier/buffer is a good voltage source.
 
@@ -116,8 +116,9 @@ The capacitor sees an equivalent resistance to \gnd of \(R_1 + R_2\) so the cuto
 		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
 		(opamp.+) to[short] ++(-0.5,0) (opamp.+ -| VG) to[R,l_=$R\sub{A}$] ++(0,-2) node[ground](G){}
 		(opamp.out) to[short,*-o] ++(1,0)
-		(VG) to[short, -*] ++(-1,0) coordinate(vin_junction) to[short] ++(-0.5,0.5) to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[1]}
-		(vin_junction) to[short] ++(-0.5,-0.5) to[R,l_=$R_2$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[2]}
+		(VG) to[short,*-] ++(-1,1) to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[1]}
+		(VG) to[short] ++(-1,0) to[R,l_=$R_2$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[2]}
+		(VG) to[short] ++(-1,-1) to[R,l_=$R_3$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[3]}
 		(VG) to[short] ++(0,1.25) |- ++(0.5,0) to[R=$R\sub{F}$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout};
 	\end{circuitikz}
 \end{center}
@@ -145,28 +146,47 @@ Alternatively, replace \R[A] with a short circuit if that error is negligible.
 
 \section{Non-inverting summing amplifier}
 \begin{center}
-	\includegraphics{schematics/summingamp.PNG}
+	\begin{circuitikz}
+		\draw (0,0) node[above]{\vin[1]} to[short, o-] ++(0.5,0) to[R=$R_1$] ++(2,0) to[short,-*] ++(1,-1) coordinate(vin_junction) to[short] ++(0.25,0)
+		node[op amp, noinv input up, anchor=+](OA){}
+		(vin_junction) to[short] ++(-1,0) to[R,l_=$R_2$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[2]}
+		(vin_junction) to[short] ++(-1,-1) to[R,l_=$R_3$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[3]}
+		(OA.out) to[R=$R\sub{F}$] ++(0,-2) coordinate(FB)
+		to[R=$R\sub{G}$] ++(0,-2) node[ground]{}
+		(OA.out) to[short, *-o] ++(1,0) node[above]{\vout}
+		(OA.-) -- (FB -| OA.-) to[short, -*] (FB);
+	\end{circuitikz}
 \end{center}
-The non-inverting summing amplifier is similar to the op amp non-inverting amplifier, except that it has multiple inputs. To analyze it, note that the inverting input voltage $v_{-}$ is
+
+The non-inverting summing amplifier is just an op amp non-inverting amplifier with multiple inputs.
+To analyze it, note that the voltage at the op amp's inverting input is
+
+\begin{equation*}
+v\sub{-} = \frac{\R[G]}{\R[G] + \R[F]}\vout \implies \vout = \left(1 + \frac{\R[F]}{\R[G]}\right)v\sub{-}
+\end{equation*}
+
+The voltage \(v\sub{+}\) at the non-inverting input is related to the inputs by \ac{kcl} on the currents through the input resistors and the fact that an ideal op amp's input bias current is zero:
+
+\begin{equation*}
+	0 = \sum_{x=1}^{n}\iin[x] = \sum_{x=1}^{n}\frac{\vin[x] - v\sub{+}}{R_x} \implies \sum_{x=1}^{n}\frac{\vin[x]}{R_x} = \sum_{x=1}^{n}\frac{v\sub{+}}{R_x} = v\sub{+}\sum_{x=1}^{n}\frac{1}{R_x} \implies v\sub{+} = \left(\sum_{x=1}^{n}\frac{1}{R_x}\right)^{-1}\left(\sum_{x=1}^{n}\frac{\vin[x]}{R_x}\right)
+\end{equation*}
+
+Since the op amp has negative feedback \(v\sub{+} = v\sub{-}\).
+Therefore \(v\sub{+}\) can be substituted for \(v\sub{-}\) in the equation for \vout and we find:
 
 \begin{equation}
-v_{-} = \frac{R_4}{R_4 + R_5}\vout
+	\vout = \left(1 + \frac{\R[F]}{\R[G]}\right)\left(\sum_{x=1}^{n}\frac{1}{R_x}\right)^{-1}\left(\sum_{x=1}^{n}\frac{\vin[x]}{R_x}\right)
+	\label{eq:summing_amp}
 \end{equation}
 
-(assume for simplicity that $V\sub{REF} = \SI{0}{\V}$) since $R_4$ and $R_5$ form a voltage divider.
-This is also the voltage at the non-inverting input and \ac{kcl} can be used on the currents through the input resistors.
-This gives the transfer function:
+Determining the correct resistor values to use in order to achieve the desired gain for each input (and finding the standard resistor values that will do it) is in general more difficult than the inverting summing amplifier's case, so the latter is often preferred when the phase of the output voltage is not important (e.g., for audio circuits).
+Nonetheless, if the inputs can be weighted equally then each of the input resistors can be set to the same value \(\R \neq 0\) and the sum factors in \eqref{eq:summing_amp} simplify to
 
-\textcolor{red}{
-\begin{equation}
-\vout = \frac{R_4 + R_5}{R_4\left(\frac{1}{R_1} + \frac{1}{R_2} + \frac{1}{R_3}\right)}\left(\frac{v_1}{R_1} + \frac{v_2}{R_2} + \frac{v_3}{R_3}\right)
-\label{eq:summingamp}
-\end{equation}
-}
+\begin{equation*}
+	\left(\sum_{x=1}^{n}\frac{1}{R}\right)^{-1}\left(\sum_{x=1}^{n}\frac{\vin[x]}{R}\right) = \left(\frac{n}{R}\right)^{-1}\left(\frac{1}{R}\sum_{x=1}^{n}\vin[x]\right) = \frac{1}{n}\sum_{x=1}^{n}\vin[x]
+\end{equation*}
 
-Determining the correct resistor values to use in order to achieve the desired gain for each input (and finding the standard resistor values that will do it) is slightly trickier than the inverting summing amplifier's case.
-For audio circuits the inverting summing amplifier is easier to work with since a voltage signal that has been inverted cannot be distinguished by the human ear from the same signal that has not -- only amplitude and frequency matter in this case, not phase.
-Other applications may also allow for an inversion, but if not the non-inverting summing amplifier works well.
+In this case the output can be set to the average of the inputs by setting the gain to 1 (set \R[G] to an open circuit and \R[F] to a short circuit) or the sum of the \(n\) inputs by setting the gain to \(n\) with \(\R[F] = (n - 1)\R[G]\).
 
 \section{Difference Amplifiers}
 
