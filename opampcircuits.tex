@@ -92,7 +92,7 @@ Rearranging gives the transfer function:
 
 \begin{equation}
 	\frac{\vout}{\vin} = 1+\frac{\R[F]}{\R[G]}
-	\label{eq:noninvertingopampamplifier}
+	\label{eq:noninverting_amplifier_TF}
 \end{equation}
 
 The transfer function shows that this circuit is a voltage buffer if \(\R[F] = 0\) and/or \(\R[G] \to \infty\), which is as simple as replacing the resistors with a wire and open circuit, respectively.
@@ -105,7 +105,7 @@ Set the resistor \(R = R_1 \parallel R_2\) to minimize the error caused by the o
 Unfortunately, this option reduces the amplifier's input resistance to \(\rin = R\) in the passband.
 
 Another option, if the signal is \AC but \DC does not need to be blocked, is to insert a capacitor \C between \R[1] and \gnd.
-The capacitor is an open circuit for \DC, which makes the denominator in \eqref{eq:noninvertingopampamplifier} very large and the \DC gain approximately 1;
+The capacitor is an open circuit for \DC, which makes the denominator in \eqref{eq:noninverting_amplifier_TF} very large and the \DC gain approximately 1;
 in the passband the capacitor is a short circuit so the gain is unaffected.
 The capacitor sees an equivalent resistance to \gnd of \(R_1 + R_2\) so the cutoff frequency is \(\fcutoff = 1/(2\pi(R_1 + R_2)C\).
 
@@ -192,19 +192,49 @@ In this case the output can be set to the average of the inputs by setting the g
 
 \subsection{Basic difference amplifier}
 \begin{center}
-	\includegraphics{schematics/differenceamp.PNG}
+	\begin{circuitikz}
+		\draw (0, 0) node[op amp] (opamp) {}
+		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
+		(opamp.+) to[short,-*] ++(-0.5,0) (opamp.+ -| VG) coordinate(VG+) to[R,l_=$R\sub{G}$] ++(0,-2) node[ground](G){}
+		(VG+) to[short] ++(-0.5,0) to[R=$R_2$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[2]}
+		(opamp.out) to[short,*-o] ++(1,0)
+		(VG) to[short] ++(-0.5,0) to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[1]}
+		(VG) to[short] ++(0,1.25) |- ++(0.5,0) to[R=$R\sub{F}$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout};
+	\end{circuitikz}
 \end{center}
-In this configuration each of the two inputs is connected to one of the op amp's inputs through a resistor ($R_1$).
-Two additional resistors are used:
-a feedback resistor from the output to the inverting input of the op amp, and another resistor of equal value from the non-inverting input of the op amp to the common mode voltage (usually $V\sub{CC}/2$ for a single supply system and GND for a dual supply system).
-Using the fact that an ideal op amp's inputs are at equal voltages and \ac{kcl} on both the inverting and non-inverting inputs, the transfer function is
 
-\textcolor{red}{
+This circuit can be analyzed using superposition.
+With \(\vin[2] = 0\) the circuit has the same topology has an inverting amplifier so by \eqref{eq:inverting_amplifier_TF} the contribution of \vin[1] is
+
+\begin{equation*}
+	\vout = -\frac{\R[F]}{\R[1]}\vin[1]
+\end{equation*}
+
+With \(\vin[1] = 0\) the circuit has a similar topology to the non-inverting amplifier, except that the voltage \(v\sub{+}\) at the op amp's non-inverting input is
+
+\begin{equation*}
+	v\sub{+}= \frac{\R[G]}{\R[2] + \R[G]}\vin[2]
+\end{equation*}
+
+This voltage is amplified by the factor given in \eqref{eq:noninverting_amplifier_TF} so the contribution of \vin[2] is
+
+\begin{equation*}
+	\vout = \left(\frac{\R[G]}{\R[2] + \R[G]}\right)\left(1 + \frac{\R[F]}{\R[1]}\right)\vin[2] = \left(\frac{\R[G]}{\R[2] + \R[G]}\right)\left(\frac{\R[1] + \R[F]}{\R[1]}\right)\vin[2]
+\end{equation*}
+
+Adding the contributions from each input leads to the general form of the difference amplifier output:
+
 \begin{equation}
-\vout = \frac{R_2}{R_1}(v_2 - v_1)
-\label{eq:differenceamp}
+	\vout = \left(\frac{\R[G]}{\R[2] + \R[G]}\right)\left(\frac{\R[1] + \R[F]}{\R[1]}\right)\vin[2] - \frac{\R[F]}{\R[1]}\vin[1]
+	\label{eq:difference_amp_general}
 \end{equation}
-}
+
+However, this equation can be simplified and the gain for each input equalized by setting \(\R[G] = \R[F]\) and \(\R[1] = \R[2]\), in which case the output is:
+
+\begin{equation}
+	\vout = \frac{\R[F]}{\R[1]}\left(\vin[2] - \vin[1]\right)
+	\label{eq:difference_amp}
+\end{equation}
 
 \subsection{High common-mode range difference amplifier}
 \begin{center}
