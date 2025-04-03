@@ -168,14 +168,14 @@ v\sub{-} = \frac{\R[G]}{\R[G] + \R[F]}\vout \implies \vout = \left(1 + \frac{\R[
 The voltage \(v\sub{+}\) at the non-inverting input is related to the inputs by \ac{kcl} on the currents through the input resistors and the fact that an ideal op amp's input bias current is zero:
 
 \begin{equation*}
-	0 = \sum_{x=1}^{n}\iin[x] = \sum_{x=1}^{n}\frac{\vin[x] - v\sub{+}}{R_x} \implies \sum_{x=1}^{n}\frac{\vin[x]}{R_x} = \sum_{x=1}^{n}\frac{v\sub{+}}{R_x} = v\sub{+}\sum_{x=1}^{n}\frac{1}{R_x} \implies v\sub{+} = \left(\sum_{x=1}^{n}\frac{1}{R_x}\right)^{-1}\left(\sum_{x=1}^{n}\frac{\vin[x]}{R_x}\right)
+	0 = \sum_{x=1}^{n}\iin[x] = \sum_{x=1}^{n}\frac{\vin[x] - v\sub{+}}{R_x} \implies \sum_{x=1}^{n}\frac{\vin[x]}{R_x} = \sum_{x=1}^{n}\frac{v\sub{+}}{R_x} = v\sub{+}\sum_{x=1}^{n}\frac{1}{R_x} \implies v\sub{+} = \frac{\displaystyle\sum_{x=1}^{n}\frac{\vin[x]}{R_x}}{\displaystyle\sum_{x=1}^{n}\frac{1}{R_x}}
 \end{equation*}
 
 Since the op amp has negative feedback \(v\sub{+} = v\sub{-}\).
 Therefore \(v\sub{+}\) can be substituted for \(v\sub{-}\) in the equation for \vout and we find:
 
 \begin{equation}
-	\vout = \left(1 + \frac{\R[F]}{\R[G]}\right)\left(\sum_{x=1}^{n}\frac{1}{R_x}\right)^{-1}\left(\sum_{x=1}^{n}\frac{\vin[x]}{R_x}\right)
+	\vout = \left(1 + \frac{\R[F]}{\R[G]}\right)\frac{\displaystyle\sum_{x=1}^{n}\frac{\vin[x]}{R_x}}{\displaystyle\sum_{x=1}^{n}\frac{1}{R_x}}
 	\label{eq:summing_amp}
 \end{equation}
 
@@ -183,7 +183,7 @@ Determining the correct resistor values to use in order to achieve the desired g
 Nonetheless, if the inputs can be weighted equally then each of the input resistors can be set to the same value \(\R \neq 0\) and the sum factors in \eqref{eq:summing_amp} simplify to
 
 \begin{equation*}
-	\left(\sum_{x=1}^{n}\frac{1}{R}\right)^{-1}\left(\sum_{x=1}^{n}\frac{\vin[x]}{R}\right) = \left(\frac{n}{R}\right)^{-1}\left(\frac{1}{R}\sum_{x=1}^{n}\vin[x]\right) = \frac{1}{n}\sum_{x=1}^{n}\vin[x]
+	\frac{\displaystyle\sum_{x=1}^{n}\frac{\vin[x]}{R_x}}{\displaystyle\sum_{x=1}^{n}\frac{1}{R_x}} = \frac{\displaystyle\frac{1}{R}\sum_{x=1}^{n}\vin[x]}{n/R} = \frac{1}{n}\sum_{x=1}^{n}\vin[x]
 \end{equation*}
 
 In this case the output can be set to the average of the inputs by setting the gain to 1 (set \R[G] to an open circuit and \R[F] to a short circuit) or the sum of the \(n\) inputs by setting the gain to \(n\) with \(\R[F] = (n - 1)\R[G]\).
