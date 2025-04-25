@@ -1,5 +1,6 @@
 \chapter{Basic Operational Amplifier Circuits}
-% TODO: add transimpedance amplifier
+% TODO: add transimpedance amplifier, Howland current pump
+% TODO: add information about choosing the resistor values (not too low, not too high). See https://www.analog.com/en/resources/analog-dialogue/raqs/raq-issue-122.html. Might need to be in an appendix.
 Operational amplifiers are extremely useful and versatile circuits.
 This chapter presents basic application circuits which use operational amplifiers for amplification, buffering, summing, integrating, etc.
 
@@ -188,9 +189,7 @@ Nonetheless, if the inputs can be weighted equally then each of the input resist
 
 In this case the output can be set to the average of the inputs by setting the gain to 1 (set \R[G] to an open circuit and \R[F] to a short circuit) or the sum of the \(n\) inputs by setting the gain to \(n\) with \(\R[F] = (n - 1)\R[G]\).
 
-\section{Difference Amplifiers}
-
-\subsection{Basic difference amplifier}
+\section{Difference Amplifier}
 \begin{center}
 	\begin{circuitikz}
 		\draw (0, 0) node[op amp] (opamp) {}
@@ -236,55 +235,8 @@ However, this equation can be simplified and the gain for each input equalized b
 	\label{eq:difference_amp}
 \end{equation}
 
-\subsection{High common-mode range difference amplifier}
-\begin{center}
-	\includegraphics{schematics/highcmdifferenceamplifier.PNG}
-\end{center}
-This improved difference amplifier allows for a higher common-mode range because the resistors in series with the signal inputs $v_1$ and $v_2$ ($R_1$ and $R_4$, respectively) limit the currents into the op amps' inputs, increasing the voltage range within the op amp's drive capability. \autocite[418]{op-amps-for-everyone}
-
-The transfer function can be derived easily using superposition and the above transfer functions for inverting and non-inverting op amp amplifiers to determine \vout in terms of all four inputs ($v_1$, $v_2$, $V\sub{CM1}$, and $V\sub{CM2}$).
-For $v_1$,
-
-\begin{equation}
-\vout = \frac{R_2}{R_1}\frac{R_5}{R_3}v_1, v_2 = V\sub{CM1} = V\sub{CM2} = 0
-\end{equation}
-
-(the output of the first op amp is $-(R_2/R_1)v_1$, which is then amplified by $-R_5/R_3$).
-For $v_2$,
-
-\begin{equation}
-\vout = -\frac{R_5}{R_4}v_2, v_1 = V\sub{CM1} = V\sub{CM2} = 0
-\end{equation}
-
-For $V\sub{CM1}$,
-
-\begin{equation}
-\vout = -\left(1+\frac{R_2}{R_1}\right)\frac{R_5}{R_3}V\sub{CM1}, v_{1} = v_{2} = V\sub{CM2} = 0
-\end{equation}
-
-For $V\sub{CM2}$,
-
-\begin{equation}
-\vout = \left(1+\frac{R_5}{R_3 \parallel R_4}\right)V\sub{CM2} = \left(1+\frac{(R_3+R_4)R_5}{R_3R_4}\right)V\sub{CM2}, v_1 = v_2 = V\sub{CM2} = 0
-\end{equation}
-
-Putting it all together,
-
-\textcolor{red}{
-\begin{equation}
-\vout = \frac{R_2}{R_1}\frac{R_5}{R_3}v_1 - \frac{R_5}{R_4}v_2 - \left(1+\frac{R_2}{R_1}\right)\frac{R_5}{R_3}V\sub{CM1} + \left(1+\frac{(R_3+R_4)R_5}{R_3R_4}\right)V\sub{CM2}
-\label{eq:highcmdifferenceamplifier}
-\end{equation}
-}
-
-If all the resistors are equal, the transfer function simplifies to
-
-\textcolor{red}{
-\begin{equation}
-\vout = v_1-v_2-2V\sub{CM1}+3V\sub{CM2}
-\label{eq:highcmdifferenceamplifier_simple}
-\end{equation}
-}
+%\section{High Common-Mode Voltage Difference Amplifier}
+% TODO: Use circuit from a high common-mode diff amp like the INA149, which uses an input voltage divider. See https://www.ti.com/lit/ds/symlink/ina149.pdf
 
 % TODO
 %\section{Op Amp Current Doubler}
