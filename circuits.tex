@@ -13,6 +13,7 @@
 \usepackage{amsfonts}
 \usepackage{derivative}
 \usepackage[margin=1in]{geometry}
+\usepackage{mathtools} % \DeclarePairedDelimiter
 \usepackage{siunitx}
 \usepackage[american,siunitx]{circuitikz}
 \usepackage{xspace}
@@ -29,7 +30,11 @@
     ]{biblatex}
 \addbibresource{references.bib}
 
-\NewDocumentCommand\abs{m}{\ensuremath{\left|#1\right|}\xspace}
+% Starred variant uses \left/\right.
+% Optional argument can specify a size command like \big or \Big
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+
+% \NewDocumentCommand\abs{m}{\ensuremath{\left|#1\right|}\xspace}
 \NewDocumentCommand\sub{m}{\ensuremath{_\mathrm{#1}}\xspace}
 
 \NewDocumentCommand\gnd{}{GND\xspace}
