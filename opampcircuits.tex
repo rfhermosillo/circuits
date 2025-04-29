@@ -29,14 +29,24 @@ Multiple op amp inverting (or non-inverting) amplifiers with lower individual ga
 
 \section{Inverting amplifier}
 \label{sec:inverting_amplifier}
+% \begin{center}
+% 	\begin{circuitikz}
+% 		\draw (0, 0) node[op amp] (opamp) {}
+% 		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
+% 		(opamp.+) to[short] ++(-0.5,0) (opamp.+ -| VG) to[R,l_=$R_3$] ++(0,-2) node[ground](G){}
+% 		(opamp.out) to[short,*-o] ++(1,0)
+% 		(VG) to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}
+% 		(VG) to[short] ++(0,1.25) |- ++(0.5,0) to[R=$R_2$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout};
+% 	\end{circuitikz}
+% \end{center}
+
 \begin{center}
 	\begin{circuitikz}
-		\draw (0, 0) node[op amp] (opamp) {}
-		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
-		(opamp.+) to[short] ++(-0.5,0) (opamp.+ -| VG) to[R,l_=$R_3$] ++(0,-2) node[ground](G){}
-		(opamp.out) to[short,*-o] ++(1,0)
-		(VG) to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}
-		(VG) to[short] ++(0,1.25) |- ++(0.5,0) to[R=$R_2$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout};
+		\invertingopamp{0,0}% #2 start coordinate (#1 is default "OA" name)
+		{to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}}% inverting input network starting at coordinate #1-in-
+		{R=$R_2$}% feedback element
+		{to[R,l_=$R_3$] ++(0,-2) node[ground](G){}}% non-inverting input network starting at coordinate #1-in+
+		[\vout]
 	\end{circuitikz}
 \end{center}
 
@@ -234,6 +244,9 @@ However, this equation can be simplified and the gain for each input equalized b
 	\vout = \frac{\R[F]}{\R[1]}\left(\vin[2] - \vin[1]\right)
 	\label{eq:difference_amp}
 \end{equation}
+
+% TODO: add note about mismatched input impedances from Op Amps for Everyone p. 415
+% TODO: add high input impedance diff amp from Op Amps for Everyone p. 417?
 
 %\section{High Common-Mode Voltage Difference Amplifier}
 % TODO: Use circuit from a high common-mode diff amp like the INA149, which uses an input voltage divider. See https://www.ti.com/lit/ds/symlink/ina149.pdf
