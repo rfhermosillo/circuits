@@ -29,23 +29,12 @@ Multiple op amp inverting (or non-inverting) amplifiers with lower individual ga
 
 \section{Inverting amplifier}
 \label{sec:inverting_amplifier}
-% \begin{center}
-% 	\begin{circuitikz}
-% 		\draw (0, 0) node[op amp] (opamp) {}
-% 		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
-% 		(opamp.+) to[short] ++(-0.5,0) (opamp.+ -| VG) to[R,l_=$R_3$] ++(0,-2) node[ground](G){}
-% 		(opamp.out) to[short,*-o] ++(1,0)
-% 		(VG) to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}
-% 		(VG) to[short] ++(0,1.25) |- ++(0.5,0) to[R=$R_2$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout};
-% 	\end{circuitikz}
-% \end{center}
-
 \begin{center}
 	\begin{circuitikz}
-		\invertingopamp{0,0}% #2 start coordinate (#1 is default "OA" name)
-		{to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}}% inverting input network starting at coordinate #1-in-
-		{R=$R_2$}% feedback element
-		{to[R,l_=$R_3$] ++(0,-2) node[ground](G){}}% non-inverting input network starting at coordinate #1-in+
+		\invertingopamp{0,0}
+		{to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}}% from in-
+		[R=$R_2$]% feedback element
+		{to[R,l_=$R_3$] ++(0,-2) node[ground](G){}}% from in+
 		[\vout]
 	\end{circuitikz}
 \end{center}
@@ -123,14 +112,13 @@ The capacitor sees an equivalent resistance to \gnd of \(R_1 + R_2\) so the cuto
 \section{Inverting summing amplifier}
 \begin{center}
 	\begin{circuitikz}
-		\draw (0, 0) node[op amp] (opamp) {}
-		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
-		(opamp.+) to[short] ++(-0.5,0) (opamp.+ -| VG) to[R,l_=$R\sub{A}$] ++(0,-2) node[ground](G){}
-		(opamp.out) to[short,*-o] ++(1,0)
-		(VG) to[short,*-] ++(-1,1) to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[1]}
-		(VG) to[short] ++(-1,0) to[R,l_=$R_2$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[2]}
-		(VG) to[short] ++(-1,-1) to[R,l_=$R_3$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[3]}
-		(VG) to[short] ++(0,1.25) |- ++(0.5,0) to[R=$R\sub{F}$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout};
+		\invertingopamp{0,0}
+		{to[short,*-] ++(-1,1) to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[1]}
+		(OA-in-) to[short] ++(-1,0) to[R,l_=$R_2$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[2]}
+		(OA-in-) to[short] ++(-1,-1) to[R,l_=$R_3$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[3]}}% from in-
+		[R=$R\sub{F}$]% feedback element
+		{to[R,l_=$R\sub{A}$] ++(0,-2) node[ground](G){}}% from in+
+		[\vout]
 	\end{circuitikz}
 \end{center}
 
@@ -202,13 +190,12 @@ In this case the output can be set to the average of the inputs by setting the g
 \section{Difference Amplifier}
 \begin{center}
 	\begin{circuitikz}
-		\draw (0, 0) node[op amp] (opamp) {}
-		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
-		(opamp.+) to[short,-*] ++(-0.5,0) (opamp.+ -| VG) coordinate(VG+) to[R,l_=$R\sub{G}$] ++(0,-2) node[ground](G){}
-		(VG+) to[short] ++(-0.5,0) to[R=$R_2$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[2]}
-		(opamp.out) to[short,*-o] ++(1,0)
-		(VG) to[short] ++(-0.5,0) to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[1]}
-		(VG) to[short] ++(0,1.25) |- ++(0.5,0) to[R=$R\sub{F}$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout};
+		\invertingopamp{0,0}
+		{to[short] ++(-0.5,0) to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[1]}}% from in-
+		[R=$R\sub{F}$]% feedback element
+		{to[R,l_=$R\sub{G}$] ++(0,-2) node[ground](G){}
+		(OA-in+) to[short, *-] ++(-0.5,0) to[R=$R_2$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[2]}}% from in+
+		[\vout]
 	\end{circuitikz}
 \end{center}
 

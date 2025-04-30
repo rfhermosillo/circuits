@@ -72,15 +72,15 @@
 % #4: Feedback element (e.g. "R=$R_F$")
 % #5: Non-inverting input network, starting at coordinate #1-in+
 % #6: Output node name. If provided, a wire is drawn from the op amp output to an ocirc node with the given name. No wire or node is drawn if not provided.
-\NewDocumentCommand\invertingopamp{O{OA} m m m m o}{
-    \draw (\IfNoValueTF{#2}{0,0}{#2}) coordinate(#1-in-) to[short,*-] ++(0.5,0) node[op amp, anchor=-](#1){}
+\NewDocumentCommand\invertingopamp{O{OA} m m o m o}{
+    \draw (\IfNoValueTF{#2}{0,0}{#2}) coordinate(#1-in-) to[short] ++(0.5,0) node[op amp, anchor=-](#1){}
 	(#1.+) to[short] ++(-0.5,0) (#1.+ -| #1-in-) coordinate(#1-in+)
     (#1-in-) #3
-    (#1-in-) to[short] ++(0,1.25) coordinate(#1-in-above) |- ++(0.5,0) coordinate(#1-fb-left) to[#4] ++(2,0) -| (#1.out)
+    \IfValueT{#4}{(#1-in-) to[short, *-] ++(0,1.25) coordinate(#1-in-above) |- ++(0.5,0) coordinate(#1-fb-left) to[#4] ++(2,0) -| (#1.out)}
     (#1-in+) #5
     \IfValueT{#6}{(#1.out) to[short, -o] ++(1,0) node[above]{#6}}
     ;
-    \node[circ] at (#1.out){};
+    \IfValueT{#4}{\node[circ] at (#1.out){};}
 }
 
 \begin{document}

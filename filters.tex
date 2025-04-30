@@ -195,24 +195,12 @@ If gain is not needed, the op amp can be configured as a voltage buffer by remov
 
 \subsection{First-order inverting active \acl{lpf}}
 \label{sec:inverting_active_lpf_1st}
-% \begin{center}
-% 	\begin{circuitikz}
-% 		\draw (0, 0) node[op amp] (opamp) {}
-% 		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
-% 		(opamp.+) to[short] ++(-0.5,0) (opamp.+ -| VG) to[R,l_=$R\sub{A}$] ++(0,-2) node[ground](G){}
-% 		(opamp.out) to[short,*-o] ++(1,0)
-% 		(VG) to[R,l_=$R$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}
-% 		(VG) to[short,-*] ++(0,1.25) coordinate(VGU) |- ++(0.5,0) coordinate(FL) to[R=$R\sub{F}$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout}
-% 		(VGU) to[short] ++(0,1.5) coordinate(UFL) to[short] (FL |- UFL) to[C=$C$] ++(2,0) to[short] (UFL -| opamp.out) to[short,-*]  (VGU -| opamp.out);
-% 	\end{circuitikz}
-% \end{center}
-
 \begin{center}
 	\begin{circuitikz}
-		\invertingopamp{0,0}% #2 start coordinate (#1 is default "OA" name)
-		{to[R,l_=$R$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}}% inverting input network starting at coordinate #1-in-
-		{R=$R\sub{F}$}% feedback element
-		{to[R,l_=$R\sub{A}$] ++(0,-2) node[ground](G){}}% non-inverting input network starting at coordinate #1-in+
+		\invertingopamp{0,0}
+		{to[R,l_=$R$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}}% from in-
+		[R=$R\sub{F}$]% feedback element
+		{to[R,l_=$R\sub{A}$] ++(0,-2) node[ground](G){}}% from in+
 		[\vout]%
 		% Add additional feedback element
 		\draw (OA-in-above) to[short, *-] ++(0,1.5) coordinate(fb-left2) to[short] (OA-fb-left |- fb-left2) to[C=$C$] ++(2,0) to[short] (fb-left2 -| OA.out) to[short,-*]  (OA-in-above -| OA.out)
@@ -245,12 +233,11 @@ An ideal but impractical integrator circuit is:
 
 \begin{center}
 	\begin{circuitikz}
-		\draw (0, 0) node[op amp] (opamp) {}
-		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
-		(opamp.+) to[short] ++(-0.5,0) (opamp.+ -| VG) to[short] ++(0,-0.5) node[ground](G){}
-		(opamp.out) to[short,*-o] ++(1,0)
-		(VG) to[R,l_=$R$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}
-		(VG) to[short] ++(0,1.25) coordinate(VGU) |- ++(0.5,0) coordinate(FL) to[C=$C$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout};
+		\invertingopamp{0,0}
+		{to[R,l_=$R$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}}% from in-
+		[C=$C$]% feedback element
+		{to[short] ++(0,-0.5) node[ground](G){}}% from in+
+		[\vout]
 	\end{circuitikz}
 \end{center}
 
@@ -288,13 +275,14 @@ Relevant specifications of the op amp for determining \R[F] include its gain-ban
 \subsection{Inverting Differentiator}
 \begin{center}
 	\begin{circuitikz}
-		\draw (0, 0) node[op amp] (opamp) {}
-		(opamp.-) to[short,-*] ++(-0.5,0) coordinate(VG)
-		(opamp.+) to[short] ++(-0.5,0) (opamp.+ -| VG) to[R,l_=$R\sub{B}$] ++(0,-2) node[ground](G){}
-		(opamp.out) to[short,*-o] ++(1,0)
-		(VG) to[C,l_=$C$] ++(-2,0) to[R,l_=$R\sub{A}$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}
-		(VG) to[short,-*] ++(0,1.25) coordinate(VGU) |- ++(0.5,0) coordinate(RFL) to[R=$R$] ++(2,0) -| (opamp.out) to[short] ++(1,0) node[above]{\vout}
-		(VGU) to[short] ++(0,1.5) coordinate(CFL) to[short] (RFL |- CFL) to[C=$C\sub{F}$] ++(2,0) to[short] (CFL -| opamp.out) to[short,-*]  (VGU -| opamp.out);
+		\invertingopamp{0,0}
+		{to[C,l_=$C$] ++(-2,0) to[R,l_=$R\sub{A}$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}}% from in-
+		[R=$R$]% feedback element
+		{to[R,l_=$R\sub{B}$] ++(0,-2) node[ground](G){}}% from in+
+		[\vout]%
+		% Add additional feedback element
+		\draw (OA-in-above) to[short, *-] ++(0,1.5) coordinate(fb-left2) to[short] (OA-fb-left |- fb-left2) to[C=$C\sub{F}$] ++(2,0) to[short] (fb-left2 -| OA.out) to[short,-*]  (OA-in-above -| OA.out)
+		;
 	\end{circuitikz}
 \end{center}
 
