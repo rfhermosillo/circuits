@@ -101,7 +101,7 @@ Since \s is proportional to frequency, we can determine a filter's low frequency
 \begin{center}
 	\begin{circuitikz}
 		\draw (0,0) node[above]{\vin} to[R=$R$, o-*] ++(2,0) coordinate(join)
-		to[C=$C$] ++(0,-2) node[ground]{}
+		to[C=$C$] ++(0,-2) node[sground]{}
 		(join) to[short, *-o] ++(1,0) node[above]{\vout};
 	\end{circuitikz}
 \end{center}
@@ -121,7 +121,7 @@ By inspection its cutoff frequency is \(\wcutoff = 1/(R C)\).
 \begin{center}
 	\begin{circuitikz}
 		\draw (0,0) node[above]{\vin} to[C=$C$, o-*] ++(2,0) coordinate(join)
-		to[R=$R$] ++(0,-2) node[ground]{}
+		to[R=$R$] ++(0,-2) node[sground]{}
 		(join) to[short, *-o] ++(1,0) node[above]{\vout};
 	\end{circuitikz}
 \end{center}
@@ -140,13 +140,12 @@ By inspection its cutoff frequency is \(\wcutoff = 1/(R C)\).
 \subsection{First-order non-inverting active \acl{lpf}}
 \begin{center}
 	\begin{circuitikz}
-		\draw (0,0) node[above]{\vin} to[R=$R_1$, o-*] ++(2,0) coordinate(in)
-		to[C=$C$] ++(0,-2) node[ground]{}
-		(in) to[short] ++(2,0) node[op amp, noinv input up, anchor=+](OA){}
-		(OA.out) to[R=$R_3$] ++(0,-2) coordinate(FB)
-		to[R=$R_2$] ++(0,-2) node[ground]{}
-		(OA.out) to[short, *-o] ++(1,0) node[above]{\vout}
-		(OA.-) -- (FB -| OA.-) to[short, -*] (FB);
+		\noninvertingopamp{0,0}
+		{-- ++(-1,0) coordinate(filter-out) to[R,l_=$R_1$, *-o] ++(-2,0) node[above]{\vin}
+		(filter-out) to[C,l_=$C$] ++(0,-2) node[sground]{}}% from in+
+		{R=$R_3$}% feedback element
+		{to[R=$R_2$] ++(0,-2) node[sground]{}}% gain network
+		[\vout]
 	\end{circuitikz}
 \end{center}
 
@@ -170,13 +169,12 @@ If \R[2] and \R[3] are used, the three resistors should be chosen such that the 
 \label{sec:active1storderHPF}
 \begin{center}
 	\begin{circuitikz}
-		\draw (0,0) node[above]{\vin} to[C=$C$, o-*] ++(2,0) coordinate(in)
-		to[R=$R_1$] ++(0,-2) node[ground]{}
-		(in) to[short] ++(2,0) node[op amp, noinv input up, anchor=+](OA){}
-		(OA.out) to[R=$R_3$] ++(0,-2) coordinate(FB)
-		to[R=$R_2$] ++(0,-2) node[ground]{}
-		(OA.out) to[short, *-o] ++(1,0) node[above]{\vout}
-		(OA.-) -- (FB -| OA.-) to[short, -*] (FB);
+		\noninvertingopamp{0,0}
+		{-- ++(-1,0) coordinate(filter-out) to[C,l_=$C$, *-o] ++(-2,0) node[above]{\vin}
+		(filter-out) to[R,l_=$R_1$] ++(0,-2) node[sground]{}}% from in+
+		{R=$R_3$}% feedback element
+		{to[R=$R_2$] ++(0,-2) node[sground]{}}% gain network
+		[\vout]
 	\end{circuitikz}
 \end{center}
 
@@ -200,7 +198,7 @@ If gain is not needed, the op amp can be configured as a voltage buffer by remov
 		\invertingopamp{0,0}
 		{to[R,l_=$R$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}}% from in-
 		[R=$R\sub{F}$]% feedback element
-		{to[R,l_=$R\sub{A}$] ++(0,-2) node[ground](G){}}% from in+
+		{to[R,l_=$R\sub{A}$] ++(0,-2) node[sground](G){}}% from in+
 		[\vout]%
 		% Add additional feedback element
 		\draw (OA-in-above) to[short, *-] ++(0,1.5) coordinate(fb-left2) to[short] (OA-fb-left |- fb-left2) to[C=$C$] ++(2,0) to[short] (fb-left2 -| OA.out) to[short,-*]  (OA-in-above -| OA.out)
@@ -236,7 +234,7 @@ An ideal but impractical integrator circuit is:
 		\invertingopamp{0,0}
 		{to[R,l_=$R$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}}% from in-
 		[C=$C$]% feedback element
-		{to[short] ++(0,-0.5) node[ground](G){}}% from in+
+		{to[short] ++(0,-0.5) node[sground](G){}}% from in+
 		[\vout]
 	\end{circuitikz}
 \end{center}
@@ -278,7 +276,7 @@ Relevant specifications of the op amp for determining \R[F] include its gain-ban
 		\invertingopamp{0,0}
 		{to[C,l_=$C$] ++(-2,0) to[R,l_=$R\sub{A}$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}}% from in-
 		[R=$R$]% feedback element
-		{to[R,l_=$R\sub{B}$] ++(0,-2) node[ground](G){}}% from in+
+		{to[R,l_=$R\sub{B}$] ++(0,-2) node[sground](G){}}% from in+
 		[\vout]%
 		% Add additional feedback element
 		\draw (OA-in-above) to[short, *-] ++(0,1.5) coordinate(fb-left2) to[short] (OA-fb-left |- fb-left2) to[C=$C\sub{F}$] ++(2,0) to[short] (fb-left2 -| OA.out) to[short,-*]  (OA-in-above -| OA.out)
