@@ -198,7 +198,7 @@ If gain is not needed, the op amp can be configured as a voltage buffer by remov
 		\invertingopamp{0,0}
 		{to[R,l_=$R$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}}% from in-
 		[R=$R\sub{F}$]% feedback element
-		{to[R,l_=$R\sub{A}$] ++(0,-2) node[sground](G){}}% from in+
+		{to[R,l_=$R_0$] ++(0,-2) node[sground](G){}}% from in+
 		[\vout]%
 		% Add additional feedback element
 		\draw (OA-in-above) to[short, *-] ++(0,1.5) coordinate(fb-left2) to[short] (OA-fb-left |- fb-left2) to[C=$C$] ++(2,0) to[short] (fb-left2 -| OA.out) to[short,-*]  (OA-in-above -| OA.out)
@@ -219,8 +219,8 @@ Substituting this impedance into \eqref{eq:inverting_amplifier_TF} we obtain
 	\label{eq:1storder_inverting_active_LPF}
 \end{equation}
 
-To minimize the error due to the op amp's input bias current, set \(\R[A] = R \parallel \R[F]\);
-if this error is negligible \R[A] can be replaced with a short circuit.
+To minimize the error due to the op amp's input bias current, set \(\R[0] = R \parallel \R[F]\);
+if this error is negligible \R[0] can be replaced with a short circuit.
 
 % TODO: add from page 8.88 of the ADI filters chapter
 % \subsection{First-order inverting active \acl{hpf}}
@@ -274,9 +274,9 @@ Relevant specifications of the op amp for determining \R[F] include its gain-ban
 \begin{center}
 	\begin{circuitikz}
 		\invertingopamp{0,0}
-		{to[C,l_=$C$] ++(-2,0) to[R,l_=$R\sub{A}$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}}% from in-
+		{to[C,l_=$C$] ++(-2,0) to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}}% from in-
 		[R=$R$]% feedback element
-		{to[R,l_=$R\sub{B}$] ++(0,-2) node[sground](G){}}% from in+
+		{to[R,l_=$R_0$] ++(0,-2) node[sground](G){}}% from in+
 		[\vout]%
 		% Add additional feedback element
 		\draw (OA-in-above) to[short, *-] ++(0,1.5) coordinate(fb-left2) to[short] (OA-fb-left |- fb-left2) to[C=$C\sub{F}$] ++(2,0) to[short] (fb-left2 -| OA.out) to[short,-*]  (OA-in-above -| OA.out)
@@ -286,8 +286,8 @@ Relevant specifications of the op amp for determining \R[F] include its gain-ban
 
 Since differentiation is the opposite of integration, the operating principle of the differentiator circuit is to build an integrator but swap the placement of \R and \C.
 The ideal differentiator is also similar to the inverting op amp amplifier except that the resistor in series between the input and the op amp's inverting input is replaced with a capacitor.
-The circuit shown above is a practical differentiator which includes some necessary components for a real implementation, but an ideal differentiator has \(\R[A] = \C[F] = 0\) (i.e., the resistor is a short circuit and the feedback capacitor is an open circuit).
-For the ideal differentiator, the inverting input's voltage is equal to \gnd (the op amp's input bias current produces a negligible voltage across \R[B]) and the non-inverting input is at a virtual ground.
+The circuit shown above is a practical differentiator which includes some necessary components for a real implementation, but an ideal differentiator has \(\R[1] = \C[F] = 0\) (i.e., the resistor is a short circuit and the feedback capacitor is an open circuit).
+For the ideal differentiator, the inverting input's voltage is equal to \gnd (the op amp's input bias current produces a negligible voltage across \R[0]) and the non-inverting input is at a virtual ground.
 The capacitor voltage is thus equal to \(\vin(t)\) and by definition the current through it is \(\iin(t)\), so \[\iin(t) = C\odv{\vin(t)}{t}\]
 
 \ac{kcl} on the inverting input node means that \(\iin(t) = -\vout(t)/R\) also, which relates the input to the output:
@@ -313,22 +313,22 @@ Rearranging gives the transfer function as
 
 Unfortunately, the ideal differentiator tends to be unstable and is sensitive to high frequency noise.
 Both of these problems are due to the fact that the gain increases as frequency increases -- the circuit's gain is theoretically infinite at very high frequencies (though a real op amp's finite gain and bandwidth will limit the high frequency gain).
-To address these problems a practical differentiator introduces \R[A] and \C[F].
+To address these problems a practical differentiator introduces \R[1] and \C[F].
 Substituting the practical differentiator's impedances into \eqref{eq:inverting_amplifier_TF} we have:
 
-\[\frac{\vout}{\vin}(s) = -\frac{R \parallel 1/(s\C[F])}{\R[A] + 1/(s\C)}\]
+\[\frac{\vout}{\vin}(s) = -\frac{R \parallel 1/(s\C[F])}{\R[1] + 1/(s\C)}\]
 
-From this equation it is clear that at high frequencies (\(s \to \infty\), where \C is a short circuit), \R[A] in series with \C prevents the denominator from approaching 0.
+From this equation it is clear that at high frequencies (\(s \to \infty\), where \C is a short circuit), \R[1] in series with \C prevents the denominator from approaching 0.
 After some algebra we obtain:
 
 \begin{equation}
-	\frac{\vout}{\vin}(s) = \frac{-sRC}{(1 + s\R[A] C)(1 + s R \C[F])}
+	\frac{\vout}{\vin}(s) = \frac{-sRC}{(1 + s\R[1] C)(1 + s R \C[F])}
 	\label{eq:practical_differentiator_TF}
 \end{equation}
 
-This equation shows that the practical differentiator has a zero at \(s = 0\) (like the ideal differentiator) but also poles at \(s = 1/(\R[A] C)\) and \(s = 1/(R \C[F])\), resulting in corner frequencies of \(\f[A] = 1/(2\pi\R[A] C)\) and \(\f[B] = 1/(2\pi R \C[F])\).
+This equation shows that the practical differentiator has a zero at \(s = 0\) (like the ideal differentiator) but also poles at \(s = 1/(\R[1] C)\) and \(s = 1/(R \C[F])\), resulting in corner frequencies of \(\f[1] = 1/(2\pi\R[1] C)\) and \(\f[2] = 1/(2\pi R \C[F])\).
 The practical differentiator is a second-order \ac{bpf} since its transfer function has the form of \eqref{eq:2ndorderBPF}, though the differentiator is intended to be used for frequencies below the passband.
-\f[A] and \f[B] are chosen so that the lower corner frequency is at the maximum signal frequency to be differentiated, and the higher corner frequency is at a low enough frequency to keep the op amp stable.
+\f[1] and \f[2] are chosen so that the lower corner frequency is at the maximum signal frequency to be differentiated, and the higher corner frequency is at a low enough frequency to keep the op amp stable.
 
 \section{Second-order low and high pass filters}
 % TODO: rename the VCVS filters to Sallen-Key (see ADI filters p. 8.72)

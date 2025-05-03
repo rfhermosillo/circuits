@@ -34,12 +34,12 @@ Multiple op amp inverting (or non-inverting) amplifiers with lower individual ga
 		\invertingopamp{0,0}
 		{to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin}}% from in-
 		[R=$R_2$]% feedback element
-		{to[R,l_=$R_3$] ++(0,-2) node[sground](G){}}% from in+
+		{to[R,l_=$R_0$] ++(0,-2) node[sground](G){}}% from in+
 		[\vout]
 	\end{circuitikz}
 \end{center}
 
-The op amp's non-inverting input has ideally no input bias current so no current flows through $R_3$ or $C_1$ and the non-inverting input is at ground potential.
+The op amp's non-inverting input has ideally no input bias current so no current flows through $R_0$ or $C_1$ and the non-inverting input is at ground potential.
 Due to the op amp's high open loop gain, the inverting input is also ideally at ground potential (this is a ``virtual ground'' condition) so \ac{kcl} relates \vin and \vout through the inverting input node.
 There is ideally no input bias current into the op amp's inverting input so the current through $R_1$ (which is $\vin/R_1$) is equal to the current through $R_2$.
 The $R_2$ terminal connected to the inverting input is at ground potential so the voltage across $R_2$ is equal to \vout.
@@ -59,16 +59,16 @@ Since the non-inverting input is at ground potential the input resistance is sim
 Unfortunately, this is considerably lower than the op amp's input impedance.
 \rin can be improved by maximizing $R_1$ (and therefore also $R_2$) while not making the resistors so high than the op amp's input bias currents produce a significant bias voltages. 
 
-$R_3$ is typically a short circuit, but may be set to
+$R_0$ is typically a short circuit, but may be set to
 
 \begin{equation}
-R_3 = R_1 \parallel R_2
+R_0 = R_1 \parallel R_2
 \end{equation}
 
 in order to balance the bias voltages produced by the op amp's input bias currents.
 
-An optional capacitor may be placed in parallel with non-zero $R_3$ to reduce high frequency noise added by $R_3$.
-$R_3$ is only needed to produce a \DC offset and has no effect on the signal's transfer function, but it produces white thermal noise that can be attenuated by the \ac{lpf} formed by $R_3$ and the capacitor in parallel.
+An optional capacitor may be placed in parallel with non-zero $R_0$ to reduce high frequency noise added by $R_0$.
+$R_0$ is only needed to produce a \DC offset and has no effect on the signal's transfer function, but it produces white thermal noise that can be attenuated by the \ac{lpf} formed by $R_0$ and the capacitor in parallel.
 
 A capacitor \C may be inserted between \vin and \R[1] if the amplifier must be \AC-coupled.
 The op amp's inverting input is at virtual ground so the time constant is \(\tau = R_1 C\) and \(\fcutoff = 1/(2\pi R_1 C)\).
@@ -116,7 +116,7 @@ The capacitor sees an equivalent resistance to \gnd of \(R_1 + R_2\) so the cuto
 		(OA-in-) to[short] ++(-1,0) to[R,l_=$R_2$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[2]}
 		(OA-in-) to[short] ++(-1,-1) to[R,l_=$R_3$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[3]}}% from in-
 		[R=$R\sub{F}$]% feedback element
-		{to[R,l_=$R\sub{A}$] ++(0,-2) node[sground](G){}}% from in+
+		{to[R,l_=$R_0$] ++(0,-2) node[sground](G){}}% from in+
 		[\vout]
 	\end{circuitikz}
 \end{center}
@@ -134,13 +134,13 @@ The contribution of each input to the output is given by \eqref{eq:inverting_amp
 The op amp maintains the summing junction at virtual ground so that each input's contribution to the output is independent of the other inputs.
 Otherwise, each input would act as a load to all the other inputs, which means the gain of each input would be a function of not only the input's series resistor but also the number of inputs and load.
 
-To minimize the error due to the op amp's input bias currents set \R[A] equal to the parallel combination of all the other resistors:
+To minimize the error due to the op amp's input bias currents set \R[0] equal to the parallel combination of all the other resistors:
 
 \begin{equation}
-	\R[A] = \left(\frac{1}{\R[F]} + \sum_{x=1}^{n}\frac{1}{R_x}\right)^{-1}
+	\R[0] = \left(\frac{1}{\R[F]} + \sum_{x=1}^{n}\frac{1}{R_x}\right)^{-1}
 \end{equation}
 
-Alternatively, replace \R[A] with a short circuit if that error is negligible.
+Alternatively, replace \R[0] with a short circuit if that error is negligible.
 
 \section{Non-inverting summing amplifier}
 \begin{center}
