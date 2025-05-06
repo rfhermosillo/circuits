@@ -38,18 +38,21 @@
 \NewDocumentCommand\sub{m}{\ensuremath{_\mathrm{#1}}\xspace}
 
 \NewDocumentCommand\gnd{}{GND\xspace}
+\NewDocumentCommand\V{o}{\ensuremath{V\IfValueT{#1}{\sub{#1}}}\xspace}
 \NewDocumentCommand\R{o}{\ensuremath{R\IfValueT{#1}{\sub{#1}}}\xspace}
 \NewDocumentCommand\Z{o}{\ensuremath{Z\IfValueT{#1}{\sub{#1}}}\xspace}
 \NewDocumentCommand\C{o}{\ensuremath{C\IfValueT{#1}{\sub{#1}}}\xspace}
 \NewDocumentCommand\f{o}{\ensuremath{f\IfValueT{#1}{\sub{#1}}}\xspace}
 \NewDocumentCommand\w{o}{\ensuremath{\omega\IfValueT{#1}{\sub{#1}}}\xspace}
 
+\NewDocumentCommand\VREF{}{\V[REF]}
+
 % TODO: what subscript to use for input? 'i' or 's'? GHLM uses 'i' except where the source resistance Rs is important (to distinguish it from the circuit input resistance Ri).
 \NewDocumentCommand\vin{o}{\ensuremath{v_{i\IfValueT{#1}{#1}}}\xspace}
 \NewDocumentCommand\iin{o}{\ensuremath{i_{i\IfValueT{#1}{#1}}}\xspace}
-\NewDocumentCommand\rin{}{\ensuremath{R_i}\xspace}
-\NewDocumentCommand\vout{o}{\ensuremath{v_{o}\IfValueT{#1}{#1}}\xspace}
-\NewDocumentCommand\VOUT{o}{\ensuremath{V_{O}\IfValueT{#1}{#1}}\xspace}
+\NewDocumentCommand\rin{o}{\ensuremath{R_{i\IfValueT{#1}{#1}}}\xspace}
+\NewDocumentCommand\vout{o}{\ensuremath{v_{o\IfValueT{#1}{#1}}}\xspace}
+\NewDocumentCommand\VOUT{o}{\ensuremath{V_{O\IfValueT{#1}{#1}}}\xspace}
 \NewDocumentCommand\rout{o}{\ensuremath{r_{o\IfValueT{#1}{#1}}}\xspace}
 \NewDocumentCommand\rpi{o}{\ensuremath{r_{\pi\IfValueT{#1}{#1}}}\xspace}
 % TODO: add Vth, Vbe, \npn, \pnp, RL, \VT and \VTH (MOSFET threshold voltage), \BF (and what other betas?), \VGS, \VDS, \VCC, \VEE, \VDD, \VSS, \Vov for MOSFET overdrive
