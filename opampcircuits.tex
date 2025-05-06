@@ -191,46 +191,68 @@ In this case the output can be set to the average of the inputs by setting the g
 		\invertingopamp{0,0}
 		{to[short] ++(-0.5,0) to[R,l_=$R_1$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[1]}}% from in-
 		[R=$R\sub{F}$]% feedback element
-		{to[R,l_=$R\sub{G}$] ++(0,-2) node[sground](G){}
+		{to[R,l_=$R\sub{G}$] ++(0,-2) node[rground](REF){} ++(0,-0.35) node[below]{\VREF}
 		(OA-in+) to[short, *-] ++(-0.5,0) to[R=$R_2$] ++(-2,0) to[short,-o] ++(-0.5,0) node[above]{\vin[2]}}% from in+
 		[\vout]
 	\end{circuitikz}
 \end{center}
 
 This circuit can be analyzed using superposition.
-With \(\vin[2] = 0\) the circuit has the same topology has an inverting amplifier so by \eqref{eq:inverting_amplifier_TF} the contribution of \vin[1] is
+With \(\vin[2] = \VREF = 0\) the circuit has the same topology has an inverting amplifier so by \eqref{eq:inverting_amplifier_TF} the contribution of \vin[1] is
 
 \begin{equation*}
-	\vout = -\frac{\R[F]}{\R[1]}\vin[1]
+	-\frac{\R[F]}{\R[1]}\vin[1]
 \end{equation*}
 
-With \(\vin[1] = 0\) the circuit has a similar topology to the non-inverting amplifier, except that the voltage \(v\sub{+}\) at the op amp's non-inverting input is
+With \(\vin[1] = \VREF = 0\) the circuit has a similar topology to the non-inverting amplifier, except that the voltage \(v\sub{ip2}\) at the op amp's non-inverting input is
 
 \begin{equation*}
-	v\sub{+}= \frac{\R[G]}{\R[2] + \R[G]}\vin[2]
+	\frac{\R[G]}{\R[2] + \R[G]}\vin[2]
 \end{equation*}
 
 This voltage is amplified by the factor given in \eqref{eq:noninverting_amplifier_TF} so the contribution of \vin[2] is
 
 \begin{equation*}
-	\vout = \left(\frac{\R[G]}{\R[2] + \R[G]}\right)\left(1 + \frac{\R[F]}{\R[1]}\right)\vin[2] = \left(\frac{\R[G]}{\R[2] + \R[G]}\right)\left(\frac{\R[1] + \R[F]}{\R[1]}\right)\vin[2]
+	\left(\frac{\R[G]}{\R[2] + \R[G]}\right)\left(1 + \frac{\R[F]}{\R[1]}\right)\vin[2] = \left(\frac{\R[G]}{\R[2] + \R[G]}\right)\left(\frac{\R[1] + \R[F]}{\R[1]}\right)\vin[2]
+\end{equation*}
+
+With \(\vin[1] = \vin[2] = 0\), a similar analysis as for \vin[2] gives the contribution of \VREF :
+
+\begin{equation*}
+	\left(\frac{\R[2]}{\R[2] + \R[G]}\right)\left(\frac{\R[1] + \R[F]}{\R[1]}\right)\VREF
 \end{equation*}
 
 Adding the contributions from each input leads to the general form of the difference amplifier output:
 
 \begin{equation}
-	\vout = \left(\frac{\R[G]}{\R[2] + \R[G]}\right)\left(\frac{\R[1] + \R[F]}{\R[1]}\right)\vin[2] - \frac{\R[F]}{\R[1]}\vin[1]
+	\vout = \left(\frac{\R[2]}{\R[2] + \R[G]}\right)\left(\frac{\R[1] + \R[F]}{\R[1]}\right)\VREF + \left(\frac{\R[G]}{\R[2] + \R[G]}\right)\left(\frac{\R[1] + \R[F]}{\R[1]}\right)\vin[2] - \frac{\R[F]}{\R[1]}\vin[1]
 	\label{eq:difference_amp_general}
 \end{equation}
 
 However, this equation can be simplified and the gain for each input equalized by setting \(\R[G] = \R[F]\) and \(\R[1] = \R[2]\), in which case the output is:
 
 \begin{equation}
-	\vout = \frac{\R[F]}{\R[1]}\left(\vin[2] - \vin[1]\right)
+	\vout = \frac{\R[F]}{\R[1]}\left(\vin[2] - \vin[1]\right) + \VREF
 	\label{eq:difference_amp}
 \end{equation}
 
-% TODO: add note about mismatched input impedances from Op Amps for Everyone p. 415
+An issue with this circuit is that the input impedances are mismatched.
+The input impedance for \vin[1] is
+
+\begin{equation}
+	\rin[1] = R_1
+\end{equation}
+
+due to superposition and the virtual ground present at the op amp's inverting input.
+The input impedance for \vin[2] is
+
+\begin{equation}
+	\rin[2] = R_2 + \R[G]
+\end{equation}
+
+This is a problem because the op amp's input bias currents produce different input bias voltages across the mismatched input impedances, and the circuit amplifies the difference between the input bias voltages.
+\VREF can be used to cancel this offset bias voltage. \autocite[416]{op-amps-for-everyone}
+
 % TODO: add high input impedance diff amp from Op Amps for Everyone p. 417?
 
 %\section{High Common-Mode Voltage Difference Amplifier}
