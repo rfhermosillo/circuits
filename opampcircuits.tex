@@ -236,7 +236,8 @@ However, this equation can be simplified and the gain for each input equalized b
 	\label{eq:difference_amp}
 \end{equation}
 
-An issue with this circuit is that the input impedances are mismatched.
+\VREF can be used to obtain a desired transfer function with an offset and/or cancel the op amp's input offset voltage.
+The input offset voltage is caused not only by the op amp's input offset voltage but also due to the fact that the circuit's input impedances are mismatched.
 The input impedance for \vin[1] is
 
 \begin{equation}
@@ -250,8 +251,7 @@ The input impedance for \vin[2] is
 	\rin[2] = R_2 + \R[G]
 \end{equation}
 
-This is a problem because the op amp's input bias currents produce different input bias voltages across the mismatched input impedances, and the circuit amplifies the difference between the input bias voltages.
-\VREF can be used to cancel this offset bias voltage. \autocite[416]{op-amps-for-everyone}
+This is a problem because the op amp's input bias currents produce different input bias voltages across the mismatched input impedances, and the circuit amplifies the difference between the input bias voltages. \autocite[416]{op-amps-for-everyone}
 
 % TODO: add high input impedance diff amp from Op Amps for Everyone p. 417?
 
